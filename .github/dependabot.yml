@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Riyadh
+    open-pull-requests-limit: 5
+    groups:
+      next-runtime:
+        patterns:
+          - next
+          - react
+          - react-dom
+      dev-tooling:
+        patterns:
+          - "@types/*"
+          - "@tailwindcss/*"
+          - eslint*
+          - tailwindcss
+          - typescript
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: tuesday
+      time: "06:00"
+      timezone: Asia/Riyadh
+    open-pull-requests-limit: 5

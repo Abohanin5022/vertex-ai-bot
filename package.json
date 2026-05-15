@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "audit": "npm audit --audit-level=moderate",
+    "check:conflicts": "node scripts/check-conflicts.mjs",
+    "check": "npm run check:conflicts && npm run audit && npm run lint && npm run build"
   },
   "dependencies": {
     "next": "16.2.6",
@@ -22,5 +25,8 @@
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "8.5.14"
   }
 }
