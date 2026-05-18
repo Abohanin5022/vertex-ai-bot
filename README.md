@@ -8,10 +8,21 @@ Use Node.js 20.9 or newer.
 
 ```bash
 npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+Set these environment variables in `.env.local` to connect live product data:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+When the variables are not configured, the dashboard renders sample inventory
+data so local builds and CI checks remain stable.
 
 ## Project Checks
 
