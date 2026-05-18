@@ -1,5 +1,7 @@
 # packora-dashboard
 
+[![CI](https://github.com/Abohanin5022/vertex-ai-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/Abohanin5022/vertex-ai-bot/actions/workflows/ci.yml)
+
 A Next.js dashboard application.
 
 ## Development
