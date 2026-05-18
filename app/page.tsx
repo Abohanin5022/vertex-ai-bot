@@ -1,4 +1,5 @@
 import { getProducts } from "@/lib/products";
+import { ProductWorkspace } from "./product-workspace";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,6 @@ export default async function HomePage() {
     (sum, product) => sum + product.stock * product.price,
     0,
   );
-  const lowStock = products.filter((product) => product.stock <= 20);
 
   return (
     <main dir="rtl" className="min-h-screen bg-stone-50 text-stone-950">
@@ -96,98 +96,7 @@ export default async function HomePage() {
             ))}
           </section>
 
-          <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_340px]">
-            <div className="rounded-lg border border-stone-200 bg-white">
-              <div className="flex items-center justify-between border-b border-stone-200 px-4 py-3">
-                <h3 className="font-bold">المنتجات</h3>
-                <span className="text-sm text-stone-500">
-                  {products.length} منتج
-                </span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[720px] text-sm">
-                  <thead className="bg-stone-100 text-stone-600">
-                    <tr>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        المنتج
-                      </th>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        الوصف
-                      </th>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        السعر
-                      </th>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        المخزون
-                      </th>
-                      <th className="px-4 py-3 text-right font-semibold">
-                        الحالة
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-100">
-                    {products.map((product) => (
-                      <tr key={product.id}>
-                        <td className="px-4 py-4 font-semibold">
-                          {product.name}
-                        </td>
-                        <td className="max-w-md px-4 py-4 text-stone-600">
-                          {product.description}
-                        </td>
-                        <td className="px-4 py-4">
-                          {formatter.format(product.price)}
-                        </td>
-                        <td className="px-4 py-4">{product.stock}</td>
-                        <td className="px-4 py-4">
-                          <span
-                            className={`rounded-md px-2 py-1 text-xs font-semibold ${
-                              product.stock <= 20
-                                ? "bg-rose-100 text-rose-700"
-                                : "bg-emerald-100 text-emerald-700"
-                            }`}
-                          >
-                            {product.stock <= 20 ? "منخفض" : "متوفر"}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <aside className="space-y-6">
-              <section className="rounded-lg border border-stone-200 bg-white p-4">
-                <h3 className="font-bold">تنبيهات المخزون</h3>
-                <div className="mt-4 space-y-3">
-                  {lowStock.length > 0 ? (
-                    lowStock.map((product) => (
-                      <div
-                        key={product.id}
-                        className="rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800"
-                      >
-                        {product.name}: تبقى {product.stock}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-stone-500">
-                      لا توجد منتجات منخفضة المخزون.
-                    </p>
-                  )}
-                </div>
-              </section>
-
-              <section className="rounded-lg border border-stone-200 bg-white p-4">
-                <h3 className="font-bold">حالة الربط</h3>
-                <p className="mt-3 text-sm leading-6 text-stone-600">
-                  عند ضبط متغيرات Supabase العامة، ستقرأ اللوحة جدول
-                  المنتجات مباشرة. في بيئة التطوير بدون مفاتيح، تظهر بيانات
-                  تجريبية حتى يبقى البناء والاختبار مستقرين.
-                </p>
-              </section>
-            </aside>
-          </section>
+          <ProductWorkspace products={products} />
         </section>
       </div>
     </main>

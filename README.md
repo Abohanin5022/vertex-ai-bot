@@ -4,6 +4,12 @@
 
 A Next.js dashboard application.
 
+## Features
+
+- Arabic RTL operations dashboard for Packora inventory.
+- Live Supabase product loading with stable sample data fallback.
+- Product search, stock filtering, low-stock alerts, and CSV export.
+
 ## Development
 
 Use Node.js 20.9 or newer.
