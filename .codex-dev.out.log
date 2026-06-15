@@ -1,0 +1,31 @@
+
+> packora-dashboard@0.1.0 dev
+> next dev --webpack
+
+▲ Next.js 16.2.6 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.8.187:3000
+- Environments: .env.local, .env
+✓ Ready in 1089ms
+> [PWA] PWA support is disabled
+> [PWA] PWA support is disabled
+
+○ Compiling / ...
+ GET / 200 in 7.9s (next.js: 6.5s, application-code: 1394ms)
+ GET /api/orders 405 in 1846ms (next.js: 1825ms, application-code: 21ms)
+ GET / 200 in 369ms (next.js: 88ms, application-code: 281ms)
+ GET /api/orders 405 in 8ms (next.js: 3ms, application-code: 5ms)
+ GET / 200 in 130ms (next.js: 3ms, application-code: 127ms)
+ GET / 200 in 475ms (next.js: 10ms, application-code: 465ms)
+ GET /api/orders 405 in 515ms (next.js: 498ms, application-code: 17ms)
+ GET / 200 in 187ms (next.js: 59ms, application-code: 128ms)
+ GET /api/orders 405 in 6ms (next.js: 2ms, application-code: 4ms)
+ GET /merchant-login 200 in 693ms (next.js: 633ms, application-code: 60ms)
+ GET /login 200 in 48ms (next.js: 16ms, application-code: 32ms)
+ GET /login 200 in 136ms (next.js: 64ms, application-code: 71ms)
+ POST /api/login 403 in 3.7s (next.js: 1205ms, application-code: 2.5s)
+ POST /api/login 401 in 1382ms (next.js: 3ms, application-code: 1379ms)
+ GET /customer 200 in 3.3s (next.js: 2000ms, application-code: 1346ms)
+ GET /customer 200 in 2.4s (next.js: 3ms, application-code: 2.4s)
+ GET /offers 200 in 1173ms (next.js: 2ms, application-code: 1171ms)
+ GET /offers 200 in 1952ms (next.js: 674ms, application-code: 1278ms)

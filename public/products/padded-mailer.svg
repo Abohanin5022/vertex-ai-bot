@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Padded mailer">
+  <rect width="640" height="480" fill="#eef2ff"/>
+  <rect x="128" y="104" width="384" height="272" rx="30" fill="#e8d8b5"/>
+  <path d="M128 162l192 112 192-112" fill="none" stroke="#9a7441" stroke-width="16"/>
+  <path d="M170 322h128M170 284h220" stroke="#fffaf0" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="458" cy="326" r="36" fill="#4f46e5"/>
+  <path d="M444 326h28" stroke="#fff" stroke-width="11" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Paper bag">
+  <rect width="640" height="480" fill="#f0fdf4"/>
+  <path d="M172 166h296l-28 226H200z" fill="#d9a64f" stroke="#854d0e" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M246 172c0-62 148-62 148 0" fill="none" stroke="#854d0e" stroke-width="16" stroke-linecap="round"/>
+  <path d="M238 274h164M268 318h104" stroke="#fff7ed" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="438" cy="332" r="34" fill="#16a34a"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Paper cups">
+  <rect width="640" height="480" fill="#fff7ed"/>
+  <path d="M214 150h190l-28 232H242z" fill="#f8fafc" stroke="#9a3412" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M190 124h238" stroke="#9a3412" stroke-width="22" stroke-linecap="round"/>
+  <path d="M248 242h112" stroke="#fb923c" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="430" cy="274" r="54" fill="#fdba74"/>
+  <path d="M408 274h44" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+</svg>

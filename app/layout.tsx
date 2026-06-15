@@ -1,20 +1,17 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { DevServiceWorkerReset } from "@/components/dev-service-worker-reset";
+import { InstallBanner } from "@/components/install-banner";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Packora Dashboard",
-  description: "Operations dashboard for Packora products and inventory",
+  title: "Packora السعودية",
+  description:
+    "تطبيق عربي للبلاستيكيات والتغليف مع لوحة تاجر مستقلة وسلة عميل ودفع وشحن داخل السعودية",
+  manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1766E8",
 };
 
 export default function RootLayout({
@@ -23,12 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ar"
-      dir="rtl"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="ar-SA" dir="rtl" className="h-full antialiased">
+      <body className="flex min-h-full flex-col">
+        <DevServiceWorkerReset />
+        {children}
+        <InstallBanner />
+      </body>
     </html>
   );
 }

@@ -1,0 +1,125 @@
+[browser] Uncaught Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+      <SegmentViewNode type="page" pagePath="page.tsx">
+        <SegmentTrieNode>
+        <HomePage>
+          <main dir="rtl" className="min-h-scre...">
+            <div className="grid min-h...">
+              <aside>
+              <section className="min-w-0 p-...">
+                <header>
+                <section>
+                <section>
+                <section className="mt-6 round...">
+                  <div>
+                  <CommerceCommandCenter products={[...]} setupStatus={[...]}>
+                    <section className="mt-6 grid ...">
+                      <div>
+                      <aside className="space-y-5">
+                        <OrderSummary selectedProduct={{id:"sample-1", ...}} selectedQuote={{carrier:"spl", ...}} ...>
+                          <section className="rounded-lg...">
+                            <ProductVisual>
+                            <p>
+                            <h3>
+                            <div className="mt-4 space...">
+                              <div>
+                              <div>
+                              <div>
+                              <div>
+                              <p className="rounded-md...">
++                               PK-SPL-8529128
+-                               PK-SPL-8527212
+                        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at p (<anonymous>)
+    at OrderSummary (app\commerce-command-center.tsx:1356:11)
+    at CommerceCommandCenter (app\commerce-command-center.tsx:1208:9)
+    at HomePage (app\page.tsx:231:13)
+  1354 |         </div>
+  1355 |         {selectedQuote ? (
+> 1356 |           <p className="rounded-md bg-emerald-50 px-3 py-2 font-bold text-emerald-900">
+       |           ^
+  1357 |             {selectedQuote.eta} / {selectedQuote.trackingNumber}
+  1358 |           </p>
+  1359 |         ) : null}
+[browser] Uncaught Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+      <SegmentViewNode type="page" pagePath="page.tsx">
+        <SegmentTrieNode>
+        <HomePage>
+          <main dir="rtl" className="min-h-scre...">
+            <div className="grid min-h...">
+              <aside>
+              <section className="min-w-0 p-...">
+                <header>
+                <section>
+                <section>
+                <section className="mt-6 round...">
+                  <div>
+                  <CommerceCommandCenter products={[...]} setupStatus={[...]}>
+                    <section className="mt-6 grid ...">
+                      <div>
+                      <aside className="space-y-5">
+                        <OrderSummary selectedProduct={{id:"sample-1", ...}} selectedQuote={{carrier:"spl", ...}} ...>
+                          <section className="rounded-lg...">
+                            <ProductVisual>
+                            <p>
+                            <h3>
+                            <div className="mt-4 space...">
+                              <div>
+                              <div>
+                              <div>
+                              <div>
+                              <p className="rounded-md...">
++                               PK-SPL-2579281
+-                               PK-SPL-2576609
+                        ...
+      ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at p (<anonymous>)
+    at OrderSummary (app\commerce-command-center.tsx:1356:11)
+    at CommerceCommandCenter (app\commerce-command-center.tsx:1208:9)
+    at HomePage (app\page.tsx:231:13)
+  1354 |         </div>
+  1355 |         {selectedQuote ? (
+> 1356 |           <p className="rounded-md bg-emerald-50 px-3 py-2 font-bold text-emerald-900">
+       |           ^
+  1357 |             {selectedQuote.eta} / {selectedQuote.trackingNumber}
+  1358 |           </p>
+  1359 |         ) : null}
+(node:25452) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)

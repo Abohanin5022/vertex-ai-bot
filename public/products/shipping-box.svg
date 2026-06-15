@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Shipping box">
+  <rect width="640" height="480" fill="#f1f5f9"/>
+  <rect x="106" y="112" width="428" height="280" rx="28" fill="#d99538"/>
+  <path d="M106 173h428M226 112v280M414 112v280" stroke="#8a5a22" stroke-width="16" opacity=".45"/>
+  <path d="M170 256h104M170 292h164" stroke="#fff7ed" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="466" cy="294" r="42" fill="#0f172a" opacity=".16"/>
+  <path d="M448 292h36M466 274v36" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+</svg>

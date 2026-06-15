@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  image       String?
+  category    String
+  price       Float
+  compareAtPrice Float?
+  stock       Int
+  minOrderQuantity Int       @default(1)
+  isFeatured Boolean         @default(false)
+  weight      Float?
+  dimensions  String?
+  deletedAt   DateTime?
+  createdAt   DateTime        @default(now())
+  userId      String
+  isActive    Boolean         @default(true)
+  rating      Float           @default(0)
+  ratingCount Int             @default(0)
+  user        User            @relation(fields: [userId], references: [id])
+  ratings     ProductRating[]
+}
+
+model Order {
+  id                  String          @id @default(cuid())
+  customer            String
+  phone               String
+  city                String
+  address             String
+  total               Float
+  status              String          @default("pending")
+  createdAt           DateTime        @default(now())
+  paymentMethod       String          @default("cod")
+  paymentStatus       String          @default("unpaid")
+  paymentId           String?
+  bankTransferReceipt String?
+  paymentProofStatus  String?
+  shippingMethod      String?
+  shippingProvider    String?
+  shippingCost        Float           @default(0)
+  shippingEta         String?
+  shippingNotes       String?
+  paidAt              DateTime?
+  subtotal            Float           @default(0)
+  commission          Float           @default(0)
+  merchantNet         Float           @default(0)
+  platformRevenue     Float           @default(0)
+  items               OrderItem[]
+  payments            Payment[]
+  productRatings      ProductRating[]
+  storeRatings        StoreRating[]
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String?
+  name      String
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+}
+
+model Coupon {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  discount  Float
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  orderId   String?
+  provider  String   @default("moyasar")
+  paymentId String   @unique
+  amount    Float
+  currency  String   @default("SAR")
+  status    String
+  raw       Json?
+  createdAt DateTime @default(now())
+  order     Order?   @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+}
+
+model ProductRating {
+  id        String   @id @default(cuid())
+  productId String
+  orderId   String?
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  order     Order?   @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@index([orderId])
+}
+
+model StoreRating {
+  id        String   @id @default(cuid())
+  userId    String
+  orderId   String?
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  order     Order?   @relation(fields: [orderId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([orderId])
+}
+
+model PlatformCommissionSetting {
+  id                   String   @id @default("platform")
+  fixedCommission      Float    @default(0)
+  percentageCommission Float    @default(0.05)
+  commissionEnabled    Boolean  @default(true)
+  updatedAt            DateTime @default(now()) @updatedAt
+  createdAt            DateTime @default(now())
+}
+
+model SubscriptionPlan {
+  id             String   @id @default(cuid())
+  key            String   @unique
+  name           String
+  productLimit   Int
+  commissionRate Float
+  features       Json
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  users          User[]
+}
+
+model VendorApplication {
+  id           String   @id @default(cuid())
+  name         String
+  phone        String
+  city         String
+  category     String
+  notes        String?
+  status       String   @default("pending")
+  createdAt    DateTime @default(now())
+  email        String?
+  tempPassword String?
+}
+
+model User {
+  id                  String           @id @default(cuid())
+  name                String?
+  email               String           @unique
+  password            String
+  role                String           @default("merchant")
+  createdAt           DateTime         @default(now())
+  storeName           String?
+  storeSlug           String?          @unique
+  storeDescription    String?
+  storeLogo           String?
+  isActive            Boolean          @default(true)
+  storeBanner         String?
+  storeWhatsapp       String?
+  storeCity           String?
+  storeHours          String?
+  merchantServices    Json             @default("{}")
+  merchantBankAccount Json             @default("{}")
+  merchantShippingMethods Json         @default("{}")
+  merchantInstallments Json            @default("{}")
+  storeRating         Float            @default(0)
+  storeRatingCount    Int              @default(0)
+  subscriptionPlanKey String           @default("free")
+  subscriptionStatus  String           @default("active")
+  productLimit        Int              @default(20)
+  commissionRate      Float            @default(0.08)
+  products            Product[]
+  storeRatings        StoreRating[]
+  subscriptionPlan    SubscriptionPlan @relation(fields: [subscriptionPlanKey], references: [key])
+}
