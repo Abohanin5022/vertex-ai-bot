@@ -1,4 +1,4 @@
-﻿-- Add checkout V4 order fields
+-- Add checkout V4 order fields
 ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "couponCode" TEXT;
 ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "discountAmount" DOUBLE PRECISION NOT NULL DEFAULT 0;
 ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "finalTotal" DOUBLE PRECISION NOT NULL DEFAULT 0;
