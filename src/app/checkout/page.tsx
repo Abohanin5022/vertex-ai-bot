@@ -83,6 +83,7 @@ declare global {
 }
 
 const pendingCheckoutKey = "packora-pending-checkout";
+const checkoutFormStorageKey = "packora-checkout-form";
 const moyasarScriptId = "moyasar-payment-form-script";
 const moyasarStyleId = "moyasar-payment-form-style";
 const publishableKey = process.env.NEXT_PUBLIC_MOYASAR_PUBLISHABLE_KEY || "";
@@ -104,6 +105,38 @@ const cities = [
   "أبها",
 ];
 
+function readSavedCheckoutForm(): CheckoutForm {
+  const emptyForm = {
+    customer: "",
+    phone: "",
+    city: "",
+    address: "",
+  };
+
+  if (typeof window === "undefined") {
+    return emptyForm;
+  }
+
+  try {
+    const saved = window.localStorage.getItem(checkoutFormStorageKey);
+
+    if (!saved) {
+      return emptyForm;
+    }
+
+    const parsed = JSON.parse(saved) as Partial<CheckoutForm>;
+
+    return {
+      customer: typeof parsed.customer === "string" ? parsed.customer : "",
+      phone: typeof parsed.phone === "string" ? parsed.phone : "",
+      city: typeof parsed.city === "string" ? parsed.city : "",
+      address: typeof parsed.address === "string" ? parsed.address : "",
+    };
+  } catch {
+    return emptyForm;
+  }
+}
+
 export default function CheckoutPage() {
   return (
     <Suspense fallback={<CheckoutFallback />}>
@@ -124,17 +157,19 @@ function CheckoutContent() {
   const [bankTransferReceipt, setBankTransferReceipt] = useState("");
   const [bankTransferReceiptName, setBankTransferReceiptName] = useState("");
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
-  const [form, setForm] = useState<CheckoutForm>({
-    customer: "",
-    phone: "",
-    city: "",
-    address: "",
-  });
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [couponMessage, setCouponMessage] = useState("");
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+  const [form, setForm] = useState<CheckoutForm>(() => readSavedCheckoutForm());
 
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clearCart);
   const formRef = useRef(form);
   const itemsRef = useRef(items);
+  const couponCodeRef = useRef(couponCode);
+  const couponDiscountRef = useRef(0);
+  const subtotalRef = useRef(0);
   const selectedShippingRef = useRef<ShippingMethod | null>(null);
   const verifyingRef = useRef(false);
 
@@ -146,6 +181,7 @@ function CheckoutContent() {
     () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [items]
   );
+  const couponDiscount = Math.min(discount, subtotal);
   const selectedShipping = useMemo(
     () =>
       settings?.shippingMethods.find(
@@ -154,7 +190,7 @@ function CheckoutContent() {
     [selectedShippingKey, settings]
   );
   const shippingCost = selectedShipping?.cost || 0;
-  const total = subtotal + shippingCost;
+  const total = Math.max(subtotal - couponDiscount, 0) + shippingCost;
   const paymentMethods = useMemo(
     () => buildPaymentMethods(settings),
     [settings]
@@ -174,8 +210,24 @@ function CheckoutContent() {
   }, [form]);
 
   useEffect(() => {
+    window.localStorage.setItem(checkoutFormStorageKey, JSON.stringify(form));
+  }, [form]);
+
+  useEffect(() => {
     itemsRef.current = items;
   }, [items]);
+
+  useEffect(() => {
+    couponCodeRef.current = couponCode;
+  }, [couponCode]);
+
+  useEffect(() => {
+    couponDiscountRef.current = couponDiscount;
+  }, [couponDiscount]);
+
+  useEffect(() => {
+    subtotalRef.current = subtotal;
+  }, [subtotal]);
 
   useEffect(() => {
     selectedShippingRef.current = selectedShipping;
@@ -206,7 +258,13 @@ function CheckoutContent() {
             cache: "no-store",
           }
         );
-        const data = (await response.json()) as CheckoutSettings;
+        const data = (await response.json()) as CheckoutSettings & {
+          error?: string;
+        };
+
+        if (!response.ok && data.error) {
+          throw new Error(data.error);
+        }
 
         if (!response.ok) {
           throw new Error("تعذر تحميل إعدادات الدفع والشحن");
@@ -337,7 +395,12 @@ function CheckoutContent() {
               formRef.current,
               itemsRef.current,
               total,
-              selectedShippingRef.current
+              selectedShippingRef.current,
+              {
+                couponCode: couponCodeRef.current,
+                discountAmount: couponDiscountRef.current,
+                subtotal: subtotalRef.current,
+              }
             );
             const validationError = validateOrderPayload(orderPayload);
 
@@ -390,7 +453,11 @@ function CheckoutContent() {
       return;
     }
 
-    const orderPayload = buildOrderPayload(form, items, total, selectedShipping);
+    const orderPayload = buildOrderPayload(form, items, total, selectedShipping, {
+      couponCode,
+      discountAmount: couponDiscount,
+      subtotal,
+    });
     const validationError = validateOrderPayload(orderPayload);
 
     if (validationError) {
@@ -472,6 +539,46 @@ function CheckoutContent() {
     }));
   }
 
+  async function applyCoupon() {
+    const code = couponCode.trim();
+
+    if (!code) {
+      setDiscount(0);
+      setCouponMessage("أدخل كود الخصم أولاً.");
+      return;
+    }
+
+    setApplyingCoupon(true);
+    setCouponMessage("");
+
+    try {
+      const response = await fetch(
+        `/api/coupons/check?code=${encodeURIComponent(code)}`,
+        {
+          cache: "no-store",
+        }
+      );
+      const data = (await response.json()) as {
+        valid?: boolean;
+        discount?: number;
+      };
+
+      if (!response.ok || !data.valid) {
+        setDiscount(0);
+        setCouponMessage("كود الخصم غير صالح.");
+        return;
+      }
+
+      setDiscount(Math.max(Number(data.discount) || 0, 0));
+      setCouponMessage("تم تطبيق كود الخصم.");
+    } catch {
+      setDiscount(0);
+      setCouponMessage("تعذر التحقق من كود الخصم.");
+    } finally {
+      setApplyingCoupon(false);
+    }
+  }
+
   async function uploadBankTransferReceipt(
     event: ChangeEvent<HTMLInputElement>
   ) {
@@ -550,6 +657,12 @@ function CheckoutContent() {
           {verifying ? (
             <div className="mb-5 rounded-[22px] border border-sky-200 bg-sky-50 p-4 text-sm font-semibold text-sky-800">
               لا تغلق الصفحة حتى يكتمل التحقق من الدفع.
+            </div>
+          ) : null}
+
+          {settings?.merchant ? (
+            <div className="mb-5 rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] p-4 text-sm font-semibold text-[#111827]">
+              الطلب من متجر: {settings.merchant.name}
             </div>
           ) : null}
 
@@ -755,7 +868,43 @@ function CheckoutContent() {
                 ))
               )}
 
+              <div className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] p-4">
+                <label className="grid gap-2">
+                  <span className="text-sm font-semibold text-[#111827]">
+                    كود الخصم
+                  </span>
+                  <div className="flex gap-2">
+                    <input
+                      value={couponCode}
+                      onChange={(event) => {
+                        setCouponCode(event.target.value);
+                        setCouponMessage("");
+                      }}
+                      placeholder="أدخل كود الخصم"
+                      className="min-w-0 flex-1 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-sm outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={applyingCoupon}
+                      className="rounded-2xl bg-black px-5 py-3 text-sm font-semibold text-white disabled:bg-[#D1D5DB]"
+                    >
+                      {applyingCoupon ? "..." : "تطبيق"}
+                    </button>
+                  </div>
+                </label>
+
+                {couponMessage ? (
+                  <p className="mt-3 text-sm font-semibold text-[#6B7280]">
+                    {couponMessage}
+                  </p>
+                ) : null}
+              </div>
+
               <SummaryRow label="المجموع الفرعي" amount={subtotal} />
+              {couponDiscount > 0 ? (
+                <SummaryRow label="الخصم" amount={-couponDiscount} />
+              ) : null}
               <SummaryRow label="الشحن" amount={shippingCost} />
             </div>
           </section>
@@ -1064,18 +1213,49 @@ function Field({
   );
 }
 
+function normalizeSaudiPhone(phone: string) {
+  return phone.replace(/[\s-]/g, "");
+}
+
+function isValidSaudiPhone(phone: string) {
+  const normalized = normalizeSaudiPhone(phone);
+
+  return /^05\d{8}$/.test(normalized) || /^9665\d{8}$/.test(normalized);
+}
+
 function buildOrderPayload(
   form: CheckoutForm,
   items: ReturnType<typeof useCartStore.getState>["items"],
   total: number,
-  shippingMethod: ShippingMethod | null
+  shippingMethod: ShippingMethod | null,
+  totals?: {
+    couponCode?: string;
+    discountAmount?: number;
+    subtotal?: number;
+  }
 ) {
+  const discountAmount = Math.max(Number(totals?.discountAmount || 0), 0);
+  const subtotal = Math.max(
+    Number(
+      totals?.subtotal ??
+        items.reduce(
+          (sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0),
+          0
+        )
+    ),
+    0
+  );
+
   return {
     customer: form.customer.trim(),
-    phone: form.phone.trim(),
+    phone: normalizeSaudiPhone(form.phone.trim()),
     city: form.city.trim(),
     address: form.address.trim(),
     total,
+    finalTotal: total,
+    subtotal,
+    couponCode: discountAmount > 0 ? totals?.couponCode?.trim() || null : null,
+    discountAmount,
     shippingMethod: shippingMethod?.key || "",
     shippingProvider: shippingMethod?.label || "",
     shippingCost: shippingMethod?.cost || 0,
@@ -1098,6 +1278,10 @@ function validateOrderPayload(payload: OrderPayload) {
 
   if (!payload.customer || !payload.phone || !payload.city || !payload.address) {
     return "أكمل بيانات العميل والعنوان قبل الدفع.";
+  }
+
+  if (!isValidSaudiPhone(payload.phone)) {
+    return "رقم الجوال غير صحيح";
   }
 
   if (!payload.shippingMethod || !payload.shippingProvider) {

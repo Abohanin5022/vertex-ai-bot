@@ -18,18 +18,24 @@ import { OrderDetailActions } from "./order-detail-actions";
 const statusStyles: Record<string, string> = {
   bank_transfer_review: "bg-amber-50 text-amber-700 border-amber-200",
   pending: "bg-sky-50 text-sky-700 border-sky-200",
+  confirmed: "bg-indigo-50 text-indigo-700 border-indigo-200",
+  preparing: "bg-blue-50 text-blue-700 border-blue-200",
   processing: "bg-blue-50 text-blue-700 border-blue-200",
   shipped: "bg-amber-50 text-amber-700 border-amber-200",
   completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  payment_rejected: "bg-red-50 text-red-700 border-red-200",
   cancelled: "bg-red-50 text-red-700 border-red-200",
 };
 
 const statusLabels: Record<string, string> = {
   bank_transfer_review: "بانتظار مراجعة التحويل",
   pending: "جديد",
+  confirmed: "مؤكد",
+  preparing: "قيد التجهيز",
   processing: "قيد التجهيز",
-  shipped: "جاهز للشحن",
+  shipped: "تم الشحن",
   completed: "مكتمل",
+  payment_rejected: "مرفوض الدفع",
   cancelled: "ملغي",
 };
 
@@ -251,7 +257,7 @@ export default async function MerchantOrderDetailsPage({
                 )}
 
                 {order.bankTransferReceipt &&
-                order.paymentProofStatus !== "accepted" ? (
+                order.paymentProofStatus !== "approved" ? (
                   <BankTransferReviewActions orderId={order.id} />
                 ) : null}
               </section>

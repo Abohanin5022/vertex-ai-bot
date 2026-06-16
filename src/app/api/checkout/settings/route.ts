@@ -131,6 +131,17 @@ export async function GET(req: Request) {
     },
   });
 
+  if (products.length < productIds.length) {
+    return NextResponse.json(
+      {
+        error: "تحتوي السلة على منتجات غير متاحة حالياً",
+      },
+      {
+        status: 409,
+      }
+    );
+  }
+
   const merchants = Array.from(
     new Map(products.map((product) => [product.user.id, product.user])).values()
   );

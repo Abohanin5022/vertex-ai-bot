@@ -7,13 +7,13 @@ import {
   Bell,
   ClipboardList,
   Home,
-  Menu,
   Package,
   Settings,
 } from "lucide-react";
 import { CopyStoreLink } from "@/components/copy-store-link";
 import { LogoutButton } from "@/components/logout-button";
 import { PackoraLogo } from "@/components/packora-logo";
+import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/require-role";
 
 export const metadata: Metadata = {
@@ -38,6 +38,12 @@ export default async function MerchantLayout({
 }) {
   const user = await requireRole("merchant");
   const storeName = user.storeName || user.name || "متجر Packora";
+  const unreadNotificationsCount = await prisma.merchantNotification.count({
+    where: {
+      userId: user.id,
+      readAt: null,
+    },
+  });
 
   return (
     <div dir="rtl" className="min-h-screen bg-[#F7FBFF] text-[#070B2A]">
@@ -87,7 +93,13 @@ export default async function MerchantLayout({
                 <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/10 text-[#4FE7C5]">
                   <Icon size={18} />
                 </span>
-                {link.label}
+                <span className="min-w-0 flex-1">{link.label}</span>
+                {link.href === "/packora-2/notifications" &&
+                unreadNotificationsCount > 0 ? (
+                  <span className="grid h-6 min-w-6 place-items-center rounded-full bg-[#4FE7C5] px-1 text-xs font-black text-[#070B2A]">
+                    {unreadNotificationsCount}
+                  </span>
+                ) : null}
               </Link>
             );
           })}
@@ -112,9 +124,14 @@ export default async function MerchantLayout({
           <Link
             href="/packora-2/notifications"
             aria-label="الإشعارات"
-            className="grid h-11 w-11 place-items-center rounded-full bg-[#070B2A] text-white"
+            className="relative grid h-11 w-11 place-items-center rounded-full bg-[#070B2A] text-white"
           >
-            <Menu size={19} />
+            <Bell size={19} />
+            {unreadNotificationsCount > 0 ? (
+              <span className="absolute -top-1 -right-1 grid h-6 min-w-6 place-items-center rounded-full bg-[#4FE7C5] px-1 text-xs font-black text-[#070B2A]">
+                {unreadNotificationsCount}
+              </span>
+            ) : null}
           </Link>
         </div>
       </header>

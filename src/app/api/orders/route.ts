@@ -26,6 +26,10 @@ type OrderPayload = {
   status?: string;
   bankTransferReceipt?: string;
   paymentProofStatus?: string;
+  couponCode?: string | null;
+  discountAmount?: number;
+  subtotal?: number;
+  finalTotal?: number;
   shippingMethod?: string;
   shippingProvider?: string;
   shippingCost?: number;
@@ -48,6 +52,13 @@ export async function POST(req: Request) {
   const paymentId = body.paymentId || null;
   const paymentMethod = body.paymentMethod || "cod";
   const isBankTransfer = paymentMethod === "bank_transfer";
+  const requestedFinalTotal = Number(body.finalTotal ?? body.total);
+  const shippingCost = Number(body.shippingCost || 0);
+  const discountAmount = Math.max(Number(body.discountAmount || 0), 0);
+  const couponCode =
+    typeof body.couponCode === "string" && body.couponCode.trim()
+      ? body.couponCode.trim().toUpperCase()
+      : null;
 
   if (isBankTransfer && !body.bankTransferReceipt) {
     return NextResponse.json(
@@ -58,18 +69,53 @@ export async function POST(req: Request) {
 
   const profitability = await calculateOrderProfitability(
     body.items,
-    Number(body.total)
+    Number.isFinite(requestedFinalTotal) ? requestedFinalTotal : Number(body.total)
+  );
+  const subtotal = Number.isFinite(Number(body.subtotal))
+    ? Number(body.subtotal)
+    : profitability.subtotal;
+  const finalTotal = Number.isFinite(requestedFinalTotal)
+    ? requestedFinalTotal
+    : profitability.total;
+  const productIds = Array.from(
+    new Set(
+      body.items
+        .map((item) => item.productId || item.id)
+        .filter((id): id is string => Boolean(id))
+    )
   );
 
   try {
+    const merchantIds = productIds.length
+      ? Array.from(
+          new Set(
+            (
+              await prisma.product.findMany({
+                where: {
+                  id: {
+                    in: productIds,
+                  },
+                },
+                select: {
+                  userId: true,
+                },
+              })
+            ).map((product) => product.userId)
+          )
+        )
+      : [];
+
     const order = await prisma.order.create({
       data: {
         customer: body.customer || "عميل",
         phone: body.phone || "",
         city: body.city || "",
         address: body.address || "",
-        subtotal: profitability.subtotal,
-        total: profitability.total,
+        subtotal,
+        total: finalTotal,
+        finalTotal,
+        couponCode,
+        discountAmount,
         commission: profitability.commission,
         merchantNet: profitability.merchantNet,
         platformRevenue: profitability.platformRevenue,
@@ -87,7 +133,7 @@ export async function POST(req: Request) {
           : null,
         shippingMethod: body.shippingMethod || null,
         shippingProvider: body.shippingProvider || null,
-        shippingCost: Number(body.shippingCost || 0),
+        shippingCost,
         shippingEta: body.shippingEta || null,
         shippingNotes: body.shippingNotes || null,
         paidAt: body.paidAt
@@ -124,6 +170,40 @@ export async function POST(req: Request) {
         payments: true,
       },
     });
+
+    const notificationData = merchantIds.flatMap((userId) => {
+      const notifications = [
+        {
+          userId,
+          orderId: order.id,
+          type: "new_order",
+          title: "طلب جديد",
+          message: `وصلك طلب جديد من العميل ${order.customer}`,
+        },
+      ];
+
+      if (isBankTransfer) {
+        notifications.push({
+          userId,
+          orderId: order.id,
+          type: "bank_transfer_review",
+          title: "طلب تحويل بنكي يحتاج مراجعة",
+          message: "العميل رفع إيصال تحويل لطلب جديد",
+        });
+      }
+
+      return notifications;
+    });
+
+    if (notificationData.length) {
+      await Promise.all(
+        notificationData.map((notification) =>
+          prisma.merchantNotification.create({
+            data: notification,
+          })
+        )
+      );
+    }
 
     return NextResponse.json(order);
   } catch {

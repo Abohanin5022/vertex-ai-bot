@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export function BankTransferReviewActions({ orderId }: { orderId: string }) {
+export function PaymentProofActions({ orderId }: { orderId: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState<"approve" | "reject" | "">("");
 
@@ -35,12 +35,12 @@ export function BankTransferReviewActions({ orderId }: { orderId: string }) {
   }
 
   return (
-    <div className="mt-4 grid gap-2 sm:grid-cols-2">
+    <div className="grid gap-2">
       <button
         type="button"
         onClick={() => review("approve")}
         disabled={!!loading}
-        className="rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+        className="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
       >
         {loading === "approve" ? "جاري القبول..." : "قبول التحويل"}
       </button>
@@ -49,7 +49,7 @@ export function BankTransferReviewActions({ orderId }: { orderId: string }) {
         type="button"
         onClick={() => review("reject")}
         disabled={!!loading}
-        className="rounded-full border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 transition hover:bg-red-100 disabled:opacity-60"
+        className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100 disabled:opacity-60"
       >
         {loading === "reject" ? "جاري الرفض..." : "رفض التحويل"}
       </button>
