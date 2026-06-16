@@ -13,6 +13,9 @@ const authCacheDenylist = [
 ];
 
 const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "/api/orders/[id]/invoice": ["./node_modules/pdfkit/js/data/**/*"],
+  },
   images: {
     remotePatterns: [
       {
