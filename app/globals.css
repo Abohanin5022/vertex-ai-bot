@@ -201,3 +201,25 @@ header[class*="bg-[#070B2A]"] {
 [class*="bg-gradient-to-br"][class*="text-white"] {
   color: var(--foreground) !important;
 }
+
+.checkout-premium-form > section {
+  margin-top: 1.25rem;
+  border: 1px solid var(--packora-border) !important;
+  border-radius: 28px;
+  background: #ffffff;
+  padding: 1.25rem !important;
+  box-shadow: 0 14px 34px rgb(236 72 153 / 0.07);
+}
+
+.checkout-premium-form > section:first-of-type {
+  margin-top: 0;
+}
+
+.checkout-premium-form > section[class*="border-t"] {
+  border-top: 1px solid var(--packora-border) !important;
+}
+
+.checkout-premium-form h2 {
+  color: var(--packora-navy);
+  font-weight: 900;
+}

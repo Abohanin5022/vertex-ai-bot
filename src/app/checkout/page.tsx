@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { CreditCard, X } from "lucide-react";
+import {
+  CheckCircle2,
+  CreditCard,
+  Headphones,
+  LockKeyhole,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import {
   Suspense,
   useEffect,
@@ -635,7 +642,16 @@ function CheckoutContent() {
           <CreditCard size={24} />
         </header>
 
-        <form id="checkout-form" onSubmit={submitOrder} className="px-6 py-6">
+        <div className="px-5 pt-5">
+          <CheckoutStepper />
+          <TrustBadges />
+        </div>
+
+        <form
+          id="checkout-form"
+          onSubmit={submitOrder}
+          className="checkout-premium-form px-5 py-6"
+        >
           {message ? (
             <div className="mb-5 rounded-[22px] border border-amber-200 bg-amber-50 p-4 text-sm font-semibold leading-7 text-amber-800">
               {message}
@@ -666,7 +682,7 @@ function CheckoutContent() {
             </div>
           ) : null}
 
-          <section>
+          <section className="rounded-[28px] border border-[var(--packora-border)] bg-white p-5 shadow-[0_14px_34px_rgba(236,72,153,0.07)]">
             <h2 className="text-2xl font-semibold">بيانات العميل</h2>
 
             <div className="mt-5 grid gap-4">
@@ -902,9 +918,7 @@ function CheckoutContent() {
               </div>
 
               <SummaryRow label="المجموع الفرعي" amount={subtotal} />
-              {couponDiscount > 0 ? (
-                <SummaryRow label="الخصم" amount={-couponDiscount} />
-              ) : null}
+              <SummaryRow label="الخصم" amount={-couponDiscount} />
               <SummaryRow label="الشحن" amount={shippingCost} />
             </div>
           </section>
@@ -915,7 +929,7 @@ function CheckoutContent() {
             <span className="text-base text-[#6B7280]">الإجمالي</span>
             <Price
               amount={total}
-              className="text-3xl font-semibold text-[#111827]"
+              className="text-3xl font-black text-[#EC4899]"
             />
           </div>
 
@@ -948,6 +962,69 @@ function CheckoutContent() {
         </section>
       </section>
     </main>
+  );
+}
+
+function CheckoutStepper() {
+  const steps = ["السلة", "البيانات", "الدفع", "التأكيد"];
+
+  return (
+    <div className="rounded-[24px] border border-[var(--packora-border)] bg-white p-3 shadow-[0_14px_34px_rgba(236,72,153,0.07)]">
+      <div className="grid grid-cols-4 gap-2">
+        {steps.map((step, index) => {
+          const active = index <= 2;
+
+          return (
+            <div key={step} className="text-center">
+              <div
+                className={`mx-auto grid h-9 w-9 place-items-center rounded-full text-xs font-black ${
+                  active
+                    ? "bg-[var(--packora-blue)] text-white"
+                    : "bg-[var(--packora-light-pink)] text-[var(--packora-muted)]"
+                }`}
+              >
+                {active ? <CheckCircle2 size={16} /> : index + 1}
+              </div>
+              <p
+                className={`mt-2 text-[11px] font-bold ${
+                  active ? "text-[var(--packora-navy)]" : "text-[var(--packora-muted)]"
+                }`}
+              >
+                {step}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function TrustBadges() {
+  const badges = [
+    { label: "دفع آمن", icon: LockKeyhole },
+    { label: "حماية البيانات", icon: ShieldCheck },
+    { label: "دعم العملاء", icon: Headphones },
+  ];
+
+  return (
+    <div className="mt-3 grid grid-cols-3 gap-2">
+      {badges.map((badge) => {
+        const Icon = badge.icon;
+
+        return (
+          <div
+            key={badge.label}
+            className="grid min-h-20 place-items-center rounded-[20px] border border-[var(--packora-border)] bg-white p-3 text-center shadow-[0_10px_24px_rgba(236,72,153,0.06)]"
+          >
+            <Icon className="text-[var(--packora-blue)]" size={20} />
+            <p className="mt-2 text-[11px] font-black text-[var(--packora-navy)]">
+              {badge.label}
+            </p>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -1066,11 +1143,11 @@ function PaymentMethodCard({
       type="button"
       onClick={onSelect}
       disabled={disabled}
-      className={`flex w-full items-center gap-4 rounded-[24px] border p-4 text-right transition ${
+      className={`flex w-full items-center gap-4 rounded-[24px] border p-4 text-right shadow-[0_10px_24px_rgba(236,72,153,0.05)] transition ${
         isApplePay
-          ? "border-[var(--packora-blue)] bg-[var(--packora-blue)] text-white"
+          ? "border-[#111827] bg-[#111827] text-white"
           : selected
-            ? "border-[var(--packora-blue)] bg-[var(--packora-light-pink)] text-[var(--packora-navy)]"
+            ? "border-[var(--packora-blue)] bg-[var(--packora-light-pink)] text-[var(--packora-navy)] shadow-[0_14px_30px_rgba(236,72,153,0.12)]"
             : "border-[var(--packora-border)] bg-white text-[var(--packora-navy)]"
       } ${disabled ? "cursor-not-allowed opacity-55" : "hover:border-[var(--packora-blue)]"}`}
     >
@@ -1133,9 +1210,9 @@ function ShippingMethodCard({
     <button
       type="button"
       onClick={onSelect}
-      className={`w-full rounded-[24px] border p-4 text-right transition ${
+      className={`w-full rounded-[24px] border p-4 text-right shadow-[0_10px_24px_rgba(236,72,153,0.05)] transition ${
         selected
-          ? "border-[var(--packora-blue)] bg-[var(--packora-light-pink)]"
+          ? "border-[var(--packora-blue)] bg-[var(--packora-light-pink)] shadow-[0_14px_30px_rgba(236,72,153,0.12)]"
           : "border-[var(--packora-border)] bg-white hover:border-[var(--packora-blue)]"
       }`}
     >
