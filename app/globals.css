@@ -1,19 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #eef8ff;
-  --foreground: #070b2a;
-  --packora-navy: #070b2a;
-  --packora-blue: #1766e8;
-  --packora-blue-dark: #0b4fc9;
-  --packora-mint: #4fe7c5;
-  --packora-cyan: #eef8ff;
-  --packora-cyan-soft: #f7fcff;
-  --packora-orange: #ff7417;
-  --packora-orange-dark: #ea580c;
-  --packora-border: #d5ebff;
+  --background: #fdf2f8;
+  --foreground: #1f2937;
+  --packora-navy: #1f2937;
+  --packora-blue: #ec4899;
+  --packora-blue-dark: #db2777;
+  --packora-mint: #f9a8d4;
+  --packora-cyan: #fce7f3;
+  --packora-cyan-soft: #fdf2f8;
+  --packora-orange: #ec4899;
+  --packora-orange-dark: #db2777;
+  --packora-border: #fce7f3;
   --packora-muted: #6b7280;
-  --packora-soft: #f7fcff;
+  --packora-soft: #fdf2f8;
+  --packora-pink: #ec4899;
+  --packora-pink-hover: #db2777;
+  --packora-baby-pink: #f9a8d4;
+  --packora-light-pink: #fce7f3;
+  --packora-soft-pink: #fdf2f8;
 }
 
 @theme inline {
@@ -43,7 +48,7 @@ body {
 }
 
 ::selection {
-  background: #111827;
+  background: var(--packora-pink);
   color: #ffffff;
 }
 
@@ -77,4 +82,122 @@ img {
   min-height: 44px;
   min-width: 44px;
   touch-action: manipulation;
+}
+
+/* Packora Global Pink Theme Compatibility Layer */
+[class*="bg-[#070B2A]"],
+[class*="bg-[#111827]"],
+[class*="bg-black"],
+[class*="bg-slate-950"],
+[class*="bg-blue-600"],
+[class*="bg-[#1766E8]"] {
+  background-color: var(--packora-pink) !important;
+}
+
+[class*="hover:bg-[#1766E8]"]:hover,
+[class*="hover:bg-[#1D4ED8]"]:hover,
+[class*="hover:bg-blue-700"]:hover,
+[class*="hover:bg-[var(--packora-blue-dark)]"]:hover,
+[class*="hover:bg-[#070B2A]"]:hover,
+[class*="hover:bg-black"]:hover {
+  background-color: var(--packora-pink-hover) !important;
+}
+
+[class*="bg-[#4FE7C5]"],
+[class*="bg-[#EFFFFA]"],
+[class*="bg-[#EAFBFF]"],
+[class*="bg-[#EAF4FF]"],
+[class*="bg-[#F0F7FF]"],
+[class*="bg-[#F1F8FF]"],
+[class*="bg-[#F4FCFF]"],
+[class*="bg-[#F7FBFF]"],
+[class*="bg-[#F7FCFF]"],
+[class*="bg-[#F8FCFF]"],
+[class*="bg-[#F8FAFC]"] {
+  background-color: var(--packora-soft-pink) !important;
+}
+
+[class*="bg-[#EEF8FF]"],
+[class*="bg-[#DCEBFF]"],
+[class*="bg-[#D5EBFF]"],
+[class*="bg-[#E5E7EB]"] {
+  background-color: var(--packora-light-pink) !important;
+}
+
+[class*="text-[#070B2A]"],
+[class*="text-[#111827]"],
+[class*="text-slate-950"],
+[class*="text-black"] {
+  color: var(--foreground) !important;
+}
+
+[class*="text-[#1766E8]"],
+[class*="text-blue-600"],
+[class*="text-blue-700"],
+[class*="text-[var(--packora-blue)]"] {
+  color: var(--packora-pink) !important;
+}
+
+[class*="text-[#4FE7C5]"],
+[class*="text-[var(--packora-mint)]"],
+[class*="text-[var(--packora-orange)]"] {
+  color: var(--packora-pink-hover) !important;
+}
+
+[class*="border-[#DCEBFF]"],
+[class*="border-[#D5EBFF]"],
+[class*="border-[#E5E7EB]"],
+[class*="border-[var(--packora-border)]"] {
+  border-color: var(--packora-light-pink) !important;
+}
+
+[class*="focus:border-[#1766E8]"]:focus,
+[class*="focus:border-blue-600"]:focus,
+[class*="focus:border-[var(--packora-blue)]"]:focus {
+  border-color: var(--packora-pink) !important;
+}
+
+[class*="accent-[var(--packora-blue)]"] {
+  accent-color: var(--packora-pink) !important;
+}
+
+[class*="shadow-[0_"],
+[class*="shadow-xl"],
+[class*="shadow-2xl"] {
+  box-shadow: 0 18px 50px rgb(236 72 153 / 0.1) !important;
+}
+
+[class*="rounded-[28px]"],
+[class*="rounded-[30px]"],
+[class*="rounded-[32px]"] {
+  border-radius: 24px !important;
+}
+
+[class*="bg-[linear-gradient(135deg,#070B2A,#1766E8)]"],
+[class*="bg-gradient-to-l"],
+[class*="bg-gradient-to-r"],
+[class*="bg-gradient-to-br"] {
+  background-image: linear-gradient(
+    135deg,
+    var(--packora-light-pink),
+    var(--packora-soft-pink)
+  ) !important;
+}
+
+main[class*="bg-[#070B2A]"],
+[class*="min-h-screen"][class*="bg-[#070B2A]"] {
+  background-color: var(--packora-soft-pink) !important;
+  color: var(--foreground) !important;
+}
+
+header[class*="bg-[#070B2A]"] {
+  background-color: rgb(255 255 255 / 0.95) !important;
+  color: var(--foreground) !important;
+}
+
+[class*="bg-[linear-gradient"][class*="text-white"],
+[class*="bg-gradient-to-l"][class*="text-white"],
+[class*="bg-gradient-to-r"][class*="text-white"],
+[class*="bg-gradient-to-br"][class*="text-white"] {
+  color: var(--foreground) !important;
 }

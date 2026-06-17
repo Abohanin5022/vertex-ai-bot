@@ -46,18 +46,18 @@ export default async function MerchantLayout({
   });
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#F7FBFF] text-[#070B2A]">
-      <aside className="fixed inset-y-0 right-0 z-50 hidden w-80 border-l border-white/10 bg-[#070B2A] p-5 text-white shadow-[0_28px_90px_rgba(7,11,42,0.22)] lg:flex lg:flex-col">
-        <div className="rounded-[28px] bg-white p-5">
+    <div dir="rtl" className="min-h-screen bg-[var(--packora-soft-pink)] text-[var(--packora-navy)]">
+      <aside className="fixed inset-y-0 right-0 z-50 hidden w-80 border-l border-[var(--packora-border)] bg-white p-5 text-[var(--packora-navy)] shadow-[0_28px_90px_rgba(236,72,153,0.10)] lg:flex lg:flex-col">
+        <div className="rounded-[24px] border border-[var(--packora-border)] bg-[linear-gradient(135deg,#FCE7F3,#FDF2F8)] p-5">
           <PackoraLogo href="/packora-2" size="desktop" />
-          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#1766E8]">
+          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--packora-blue)]">
             Packora 2
           </p>
         </div>
 
-        <div className="mt-5 rounded-[28px] border border-white/10 bg-white/8 p-4">
+        <div className="mt-5 rounded-[24px] border border-[var(--packora-border)] bg-[var(--packora-soft-pink)] p-4">
           <div className="flex items-center gap-3">
-            <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white">
+            <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[var(--packora-border)] bg-white">
               {user.storeLogo ? (
                 <Image
                   src={user.storeLogo}
@@ -67,12 +67,12 @@ export default async function MerchantLayout({
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <Package className="text-[#1766E8]" size={26} />
+                <Package className="text-[var(--packora-blue)]" size={26} />
               )}
             </div>
 
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#4FE7C5]">
+              <p className="text-xs font-semibold text-[var(--packora-blue)]">
                 تطبيق التاجر
               </p>
               <h2 className="mt-1 truncate text-lg font-black">{storeName}</h2>
@@ -88,15 +88,15 @@ export default async function MerchantLayout({
               <Link
                 key={link.href}
                 href={link.href}
-                className="flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold text-white/82 transition hover:bg-[#1766E8] hover:text-white"
+                className="flex items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-sm font-bold text-[var(--packora-muted)] transition hover:border-[var(--packora-border)] hover:bg-[var(--packora-light-pink)] hover:text-[var(--packora-blue)]"
               >
-                <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/10 text-[#4FE7C5]">
+                <span className="grid h-9 w-9 place-items-center rounded-xl bg-[var(--packora-light-pink)] text-[var(--packora-blue)]">
                   <Icon size={18} />
                 </span>
                 <span className="min-w-0 flex-1">{link.label}</span>
                 {link.href === "/packora-2/notifications" &&
                 unreadNotificationsCount > 0 ? (
-                  <span className="grid h-6 min-w-6 place-items-center rounded-full bg-[#4FE7C5] px-1 text-xs font-black text-[#070B2A]">
+                  <span className="grid h-6 min-w-6 place-items-center rounded-full bg-[var(--packora-blue)] px-1 text-xs font-black text-white">
                     {unreadNotificationsCount}
                   </span>
                 ) : null}
@@ -114,21 +114,21 @@ export default async function MerchantLayout({
         </div>
       </aside>
 
-      <header className="sticky top-0 z-40 border-b border-[#DCEBFF] bg-white/95 px-4 py-3 backdrop-blur lg:hidden">
+      <header className="sticky top-0 z-40 border-b border-[var(--packora-border)] bg-white/95 px-4 py-3 backdrop-blur lg:hidden">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold text-[#1766E8]">Packora 2</p>
+            <p className="text-xs font-semibold text-[var(--packora-blue)]">Packora 2</p>
             <h1 className="text-lg font-black">لوحة التاجر</h1>
           </div>
 
           <Link
             href="/packora-2/notifications"
             aria-label="الإشعارات"
-            className="relative grid h-11 w-11 place-items-center rounded-full bg-[#070B2A] text-white"
+            className="relative grid h-11 w-11 place-items-center rounded-full bg-[var(--packora-blue)] text-white"
           >
             <Bell size={19} />
             {unreadNotificationsCount > 0 ? (
-              <span className="absolute -top-1 -right-1 grid h-6 min-w-6 place-items-center rounded-full bg-[#4FE7C5] px-1 text-xs font-black text-[#070B2A]">
+              <span className="absolute -top-1 -right-1 grid h-6 min-w-6 place-items-center rounded-full bg-[var(--packora-baby-pink)] px-1 text-xs font-black text-[var(--packora-navy)]">
                 {unreadNotificationsCount}
               </span>
             ) : null}

@@ -619,13 +619,13 @@ function CheckoutContent() {
   }
 
   return (
-    <main dir="rtl" className="min-h-screen bg-white pb-52 text-[#111827]">
-      <section className="mx-auto min-h-screen max-w-md bg-white">
-        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[#E5E7EB] bg-white px-6 py-5">
+    <main dir="rtl" className="min-h-screen bg-[var(--packora-soft-pink)] pb-52 text-[var(--packora-navy)]">
+      <section className="mx-auto min-h-screen max-w-md bg-white shadow-[0_20px_60px_rgba(236,72,153,0.08)]">
+        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[var(--packora-border)] bg-[linear-gradient(135deg,#FCE7F3,#FDF2F8)] px-6 py-5">
           <Link
             href="/packora-1/cart"
             aria-label="الرجوع للسلة"
-            className="grid h-11 w-11 place-items-center rounded-full border border-[#E5E7EB]"
+            className="grid h-11 w-11 place-items-center rounded-full border border-[var(--packora-border)] bg-white"
           >
             <X size={21} />
           </Link>
@@ -661,7 +661,7 @@ function CheckoutContent() {
           ) : null}
 
           {settings?.merchant ? (
-            <div className="mb-5 rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] p-4 text-sm font-semibold text-[#111827]">
+            <div className="mb-5 rounded-[22px] border border-[var(--packora-border)] bg-[var(--packora-soft-pink)] p-4 text-sm font-semibold text-[var(--packora-navy)]">
               الطلب من متجر: {settings.merchant.name}
             </div>
           ) : null}
@@ -688,7 +688,7 @@ function CheckoutContent() {
                   required
                   value={form.city}
                   onChange={(event) => updateField("city", event.target.value)}
-                  className="rounded-[22px] border border-[#E5E7EB] bg-white px-5 py-4 text-lg outline-none"
+                  className="rounded-[22px] border border-[var(--packora-border)] bg-white px-5 py-4 text-lg outline-none focus:border-[var(--packora-blue)]"
                 >
                   <option value="" disabled>
                     اختر المدينة
@@ -708,13 +708,13 @@ function CheckoutContent() {
                   value={form.address}
                   onChange={(event) => updateField("address", event.target.value)}
                   placeholder="الحي، الشارع، رقم المبنى، الرمز البريدي"
-                  className="min-h-[132px] rounded-[22px] border border-[#E5E7EB] bg-white px-5 py-4 text-lg leading-8 outline-none placeholder:text-[#9CA3AF]"
+                  className="min-h-[132px] rounded-[22px] border border-[var(--packora-border)] bg-white px-5 py-4 text-lg leading-8 outline-none placeholder:text-[#9CA3AF] focus:border-[var(--packora-blue)]"
                 />
               </label>
             </div>
           </section>
 
-          <section className="mt-9 border-t border-[#E5E7EB] pt-6">
+          <section className="mt-9 border-t border-[var(--packora-border)] pt-6">
             <h2 className="text-2xl font-semibold">طريقة الاستلام / الشحن</h2>
 
             {noShippingMethods ? (
@@ -735,7 +735,7 @@ function CheckoutContent() {
             )}
           </section>
 
-          <section className="mt-9 border-t border-[#E5E7EB] pt-6">
+          <section className="mt-9 border-t border-[var(--packora-border)] pt-6">
             <h2 className="text-2xl font-semibold">طريقة الدفع</h2>
 
             {noPaymentMethods ? (
@@ -763,7 +763,7 @@ function CheckoutContent() {
             )}
 
             {isMoyasarSelected ? (
-              <div className="mt-5 rounded-[26px] border border-[#E5E7EB] p-4">
+              <div className="mt-5 rounded-[26px] border border-[var(--packora-border)] p-4">
                 {!publishableKey ? (
                   <p className="rounded-[20px] bg-rose-50 p-4 text-sm font-semibold leading-7 text-rose-700">
                     الدفع الإلكتروني غير مفعل حاليًا.
@@ -788,9 +788,9 @@ function CheckoutContent() {
             ) : null}
 
             {paymentMethod === "bank_transfer" ? (
-              <div className="mt-5 rounded-[26px] border border-[#E5E7EB] bg-[#F9FAFB] p-4">
+              <div className="mt-5 rounded-[26px] border border-[var(--packora-border)] bg-[var(--packora-soft-pink)] p-4">
                 {settings?.bankAccount ? (
-                  <div className="rounded-[22px] border border-[#E5E7EB] bg-white p-4">
+                  <div className="rounded-[22px] border border-[var(--packora-border)] bg-white p-4">
                     <p className="text-sm font-semibold text-[#111827]">
                       بيانات التحويل
                     </p>
@@ -819,7 +819,7 @@ function CheckoutContent() {
                     accept="image/*,application/pdf"
                     onChange={uploadBankTransferReceipt}
                     disabled={uploadingReceipt}
-                    className="mt-4 block w-full rounded-2xl border border-[#E5E7EB] bg-white p-3 text-sm"
+                    className="mt-4 block w-full rounded-2xl border border-[var(--packora-border)] bg-white p-3 text-sm"
                   />
                 </label>
 
@@ -839,19 +839,19 @@ function CheckoutContent() {
             ) : null}
           </section>
 
-          <section className="mt-9 border-t border-[#E5E7EB] pt-6">
+          <section className="mt-9 border-t border-[var(--packora-border)] pt-6">
             <h2 className="text-2xl font-semibold">ملخص الطلب</h2>
 
             <div className="mt-5 grid gap-4">
               {items.length === 0 ? (
-                <p className="rounded-[22px] bg-[#F9FAFB] p-5 text-center text-[#6B7280]">
+                <p className="rounded-[22px] bg-[var(--packora-soft-pink)] p-5 text-center text-[var(--packora-muted)]">
                   لا توجد منتجات في السلة.
                 </p>
               ) : (
                 items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-start justify-between gap-4 border-b border-[#E5E7EB] pb-4"
+                    className="flex items-start justify-between gap-4 border-b border-[var(--packora-border)] pb-4"
                   >
                     <div>
                       <h3 className="text-base font-semibold">{item.name}</h3>
@@ -868,7 +868,7 @@ function CheckoutContent() {
                 ))
               )}
 
-              <div className="rounded-[22px] border border-[#E5E7EB] bg-[#F9FAFB] p-4">
+              <div className="rounded-[22px] border border-[var(--packora-border)] bg-[var(--packora-soft-pink)] p-4">
                 <label className="grid gap-2">
                   <span className="text-sm font-semibold text-[#111827]">
                     كود الخصم
@@ -881,13 +881,13 @@ function CheckoutContent() {
                         setCouponMessage("");
                       }}
                       placeholder="أدخل كود الخصم"
-                      className="min-w-0 flex-1 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-sm outline-none"
+                      className="min-w-0 flex-1 rounded-2xl border border-[var(--packora-border)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--packora-blue)]"
                     />
                     <button
                       type="button"
                       onClick={applyCoupon}
                       disabled={applyingCoupon}
-                      className="rounded-2xl bg-black px-5 py-3 text-sm font-semibold text-white disabled:bg-[#D1D5DB]"
+                      className="rounded-2xl bg-[var(--packora-blue)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--packora-blue-dark)] disabled:bg-[#D1D5DB]"
                     >
                       {applyingCoupon ? "..." : "تطبيق"}
                     </button>
@@ -910,7 +910,7 @@ function CheckoutContent() {
           </section>
         </form>
 
-        <section className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-[#E5E7EB] bg-white px-6 py-5">
+        <section className="fixed bottom-0 left-1/2 z-40 w-full max-w-md -translate-x-1/2 border-t border-[var(--packora-border)] bg-white px-6 py-5 shadow-[0_-16px_40px_rgba(236,72,153,0.10)]">
           <div className="flex items-center justify-between">
             <span className="text-base text-[#6B7280]">الإجمالي</span>
             <Price
@@ -937,7 +937,7 @@ function CheckoutContent() {
               paymentMethod === "tamara" ||
               (isMoyasarSelected && !publishableKey)
             }
-            className="mt-5 w-full rounded-full bg-black py-4 text-center text-lg font-semibold text-white disabled:bg-[#D1D5DB]"
+            className="mt-5 w-full rounded-full bg-[var(--packora-blue)] py-4 text-center text-lg font-semibold text-white transition hover:bg-[var(--packora-blue-dark)] disabled:bg-[#D1D5DB]"
           >
             {loading
               ? "جاري تأكيد الطلب..."
@@ -1068,17 +1068,17 @@ function PaymentMethodCard({
       disabled={disabled}
       className={`flex w-full items-center gap-4 rounded-[24px] border p-4 text-right transition ${
         isApplePay
-          ? "border-black bg-black text-white"
+          ? "border-[var(--packora-blue)] bg-[var(--packora-blue)] text-white"
           : selected
-            ? "border-black bg-[#F9FAFB] text-[#111827]"
-            : "border-[#E5E7EB] bg-white text-[#111827]"
-      } ${disabled ? "cursor-not-allowed opacity-55" : "hover:border-black"}`}
+            ? "border-[var(--packora-blue)] bg-[var(--packora-light-pink)] text-[var(--packora-navy)]"
+            : "border-[var(--packora-border)] bg-white text-[var(--packora-navy)]"
+      } ${disabled ? "cursor-not-allowed opacity-55" : "hover:border-[var(--packora-blue)]"}`}
     >
       <span
         className={`grid h-14 w-14 shrink-0 place-items-center rounded-2xl text-sm font-black ${
           isApplePay
-            ? "bg-white text-black"
-            : "bg-[#F3F4F6] text-[#111827]"
+            ? "bg-white text-[var(--packora-blue)]"
+            : "bg-[var(--packora-light-pink)] text-[var(--packora-navy)]"
         }`}
       >
         {method.icon}
@@ -1135,8 +1135,8 @@ function ShippingMethodCard({
       onClick={onSelect}
       className={`w-full rounded-[24px] border p-4 text-right transition ${
         selected
-          ? "border-black bg-[#F9FAFB]"
-          : "border-[#E5E7EB] bg-white hover:border-black"
+          ? "border-[var(--packora-blue)] bg-[var(--packora-light-pink)]"
+          : "border-[var(--packora-border)] bg-white hover:border-[var(--packora-blue)]"
       }`}
     >
       <span className="flex items-start justify-between gap-4">
@@ -1176,9 +1176,9 @@ function SummaryRow({ label, amount }: { label: string; amount: number }) {
 
 function CheckoutFallback() {
   return (
-    <main dir="rtl" className="grid min-h-screen place-items-center bg-white p-6">
+    <main dir="rtl" className="grid min-h-screen place-items-center bg-[var(--packora-soft-pink)] p-6">
       <div className="text-center">
-        <div className="mx-auto h-12 w-12 animate-pulse rounded-full bg-[#E5E7EB]" />
+        <div className="mx-auto h-12 w-12 animate-pulse rounded-full bg-[var(--packora-light-pink)]" />
         <p className="mt-4 font-semibold text-[#6B7280]">
           جاري تجهيز الدفع...
         </p>
@@ -1207,7 +1207,7 @@ function Field({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={label}
-        className="rounded-[22px] border border-[#E5E7EB] bg-white px-5 py-4 text-lg outline-none placeholder:text-[#9CA3AF]"
+        className="rounded-[22px] border border-[var(--packora-border)] bg-white px-5 py-4 text-lg outline-none placeholder:text-[#9CA3AF] focus:border-[var(--packora-blue)]"
       />
     </label>
   );

@@ -2,7 +2,7 @@ export const mobileConfig = {
   appName: "Packora",
   maxWidthClassName: "mx-auto w-full max-w-md",
   pageClassName:
-    "min-h-screen overflow-x-hidden bg-white pb-[calc(6rem+env(safe-area-inset-bottom))] text-[var(--packora-navy)]",
+    "min-h-screen overflow-x-hidden bg-[var(--packora-soft-pink)] pb-[calc(6rem+env(safe-area-inset-bottom))] text-[var(--packora-navy)]",
   sectionClassName: "mx-auto w-full max-w-md bg-white",
   touchTargetClassName:
     "min-h-11 min-w-11 touch-manipulation select-none rounded-full",

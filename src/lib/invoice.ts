@@ -95,7 +95,7 @@ export async function generateInvoice(order: InvoiceOrder) {
 function drawHeader(doc: PDFKit.PDFDocument, order: InvoiceOrder) {
   const invoiceId = order.id ? order.id.slice(0, 8) : "N/A";
 
-  doc.roundedRect(48, 48, 499, 96, 20).fill("#070B2A");
+  doc.roundedRect(48, 48, 499, 96, 20).fill("#EC4899");
   doc
     .fillColor("#FFFFFF")
     .font("Helvetica-Bold")
@@ -104,7 +104,7 @@ function drawHeader(doc: PDFKit.PDFDocument, order: InvoiceOrder) {
   doc
     .font("Helvetica")
     .fontSize(11)
-    .fillColor("#4FE7C5")
+    .fillColor("#FCE7F3")
     .text("Packaging and plastics marketplace", 76, 106);
   doc
     .font("Helvetica-Bold")
@@ -123,7 +123,7 @@ function drawCustomerDetails(doc: PDFKit.PDFDocument, order: InvoiceOrder) {
   const dateValue = order.createdAt ? dateFormatter.format(order.createdAt) : "-";
 
   doc
-    .fillColor("#070B2A")
+    .fillColor("#1F2937")
     .font("Helvetica-Bold")
     .fontSize(14)
     .text("Order details", 48, top);
@@ -152,7 +152,7 @@ function drawInfoBox(
   doc
     .font("Helvetica-Bold")
     .fontSize(11)
-    .fillColor("#070B2A")
+    .fillColor("#1F2937")
     .text(value, x + 14, y + 30, { width: width - 28 });
 }
 
@@ -160,7 +160,7 @@ function drawItemsTable(doc: PDFKit.PDFDocument, order: InvoiceOrder) {
   let y = 440;
 
   doc
-    .fillColor("#070B2A")
+    .fillColor("#1F2937")
     .font("Helvetica-Bold")
     .fontSize(14)
     .text("Products", 48, y);
@@ -194,12 +194,12 @@ function drawItemsTable(doc: PDFKit.PDFDocument, order: InvoiceOrder) {
     doc
       .font("Helvetica-Bold")
       .fontSize(10)
-      .fillColor("#070B2A")
+      .fillColor("#1F2937")
       .text(item.name || "-", 86, y + 12, { width: 210 });
     doc
       .font("Helvetica")
       .fontSize(10)
-      .fillColor("#070B2A")
+      .fillColor("#1F2937")
       .text(String(item.quantity), 306, y + 12, {
         width: 58,
         align: "center",
@@ -222,11 +222,11 @@ function drawItemsTable(doc: PDFKit.PDFDocument, order: InvoiceOrder) {
 }
 
 function drawTableHeader(doc: PDFKit.PDFDocument, y: number) {
-  doc.roundedRect(48, y, 499, 30, 12).fill("#F0F7FF");
+  doc.roundedRect(48, y, 499, 30, 12).fill("#FDF2F8");
   doc
     .font("Helvetica-Bold")
     .fontSize(9)
-    .fillColor("#1766E8")
+    .fillColor("#EC4899")
     .text("#", 54, y + 10, { width: 28 });
   doc.text("Product", 86, y + 10, { width: 210 });
   doc.text("Qty", 306, y + 10, { width: 58, align: "center" });
@@ -263,7 +263,7 @@ function drawSummary(doc: PDFKit.PDFDocument, order: InvoiceOrder) {
     y += 26;
   }
 
-  doc.roundedRect(x, y + 8, 247, 58, 16).fill("#1766E8");
+  doc.roundedRect(x, y + 8, 247, 58, 16).fill("#EC4899");
   doc
     .font("Helvetica")
     .fontSize(10)
@@ -282,7 +282,7 @@ function drawSummary(doc: PDFKit.PDFDocument, order: InvoiceOrder) {
   doc
     .font("Helvetica-Bold")
     .fontSize(12)
-    .fillColor("#070B2A")
+    .fillColor("#1F2937")
     .text("Payment", 48, y);
   doc
     .font("Helvetica")
@@ -330,7 +330,7 @@ function drawSummaryRow(
   doc
     .font("Helvetica-Bold")
     .fontSize(10)
-    .fillColor("#070B2A")
+    .fillColor("#1F2937")
     .text(formatMoney(value), x + 115, y, { width: 132, align: "right" });
 }
 

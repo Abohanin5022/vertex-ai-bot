@@ -31,7 +31,7 @@ export function MobilePackoraHeader({
               onClick={() => setOpen((current) => !current)}
               aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
               aria-expanded={open}
-              className="grid h-10 w-10 place-items-center rounded-2xl border border-[var(--packora-border)] bg-white text-[#111827] transition hover:border-[var(--packora-orange)] hover:bg-[#FFF7ED]"
+              className="grid h-10 w-10 place-items-center rounded-2xl border border-[var(--packora-border)] bg-white text-[var(--packora-navy)] transition hover:border-[var(--packora-blue)] hover:bg-[var(--packora-light-pink)]"
             >
               {open ? <X size={21} /> : <Menu size={21} />}
             </button>
@@ -39,7 +39,7 @@ export function MobilePackoraHeader({
             <div className="min-w-0 flex-1">
               <PackoraLogo />
               <div className="mt-1 flex items-center gap-1 text-xs font-semibold text-[#64748B]">
-                <MapPin size={13} className="text-[var(--packora-orange)]" />
+                <MapPin size={13} className="text-[var(--packora-blue)]" />
                 <span className="truncate">التوصيل إلى موقعك الحالي</span>
               </div>
             </div>

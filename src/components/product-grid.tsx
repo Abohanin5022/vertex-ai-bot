@@ -87,9 +87,9 @@ export function ProductGrid({ products }: { products: Product[] }) {
               <Link
                 key={item.label}
                 href={item.href}
-                className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--packora-border)] bg-white px-3 py-2 text-xs font-semibold text-[#334155] shadow-sm"
+                className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--packora-border)] bg-white px-3 py-2 text-xs font-semibold text-[var(--packora-navy)] shadow-sm transition hover:border-[var(--packora-blue)] hover:bg-[var(--packora-light-pink)]"
               >
-                <Icon size={15} className="text-[var(--packora-orange)]" />
+                <Icon size={15} className="text-[var(--packora-blue)]" />
                 {item.label}
               </Link>
             );
@@ -110,17 +110,17 @@ export function ProductGrid({ products }: { products: Product[] }) {
 
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-[#111827]">
+            <h2 className="text-lg font-semibold text-[var(--packora-navy)]">
               {categoryLabel === allCategory ? "المنتجات" : categoryLabel}
             </h2>
             {queryFromUrl ? (
-              <p className="mt-0.5 text-xs text-[#64748B]">
+              <p className="mt-0.5 text-xs text-[var(--packora-muted)]">
                 نتائج البحث عن: {queryFromUrl}
               </p>
             ) : null}
           </div>
 
-          <span className="rounded-full bg-[#F1F8FF] px-3 py-1 text-xs font-semibold text-[var(--packora-blue)]">
+          <span className="rounded-full bg-[var(--packora-light-pink)] px-3 py-1 text-xs font-semibold text-[var(--packora-blue)]">
             {filteredProducts.length} منتج
           </span>
         </div>
@@ -161,7 +161,7 @@ function CategoryCard({
       href={href}
       className={`grid h-[92px] place-items-center rounded-2xl border p-2 text-center transition ${
         active
-          ? "border-[var(--packora-blue)] bg-[#EAF4FF]"
+          ? "border-[var(--packora-blue)] bg-[var(--packora-light-pink)]"
           : "border-[var(--packora-border)] bg-white"
       }`}
     >
@@ -169,12 +169,12 @@ function CategoryCard({
         className={`grid h-9 w-9 place-items-center rounded-xl ${
           active
             ? "bg-[var(--packora-blue)] text-white"
-            : "bg-[#F4FCFF] text-[var(--packora-orange)]"
+            : "bg-[var(--packora-soft-pink)] text-[var(--packora-blue)]"
         }`}
       >
         <Package size={18} />
       </span>
-      <span className="line-clamp-2 text-[11px] font-semibold leading-4 text-[#334155]">
+      <span className="line-clamp-2 text-[11px] font-semibold leading-4 text-[var(--packora-navy)]">
         {label}
       </span>
     </Link>

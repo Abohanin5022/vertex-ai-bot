@@ -35,8 +35,8 @@ export default async function CustomerPage() {
     .catch(() => []);
 
   return (
-    <main dir="rtl" className={`${mobileConfig.pageClassName} bg-[#EAFBFF]`}>
-      <section className="mx-auto min-h-screen max-w-7xl bg-white shadow-[0_20px_60px_rgba(47,101,230,0.08)] sm:my-4 sm:rounded-[28px]">
+    <main dir="rtl" className={mobileConfig.pageClassName}>
+      <section className="mx-auto min-h-screen max-w-7xl bg-white shadow-[0_20px_60px_rgba(236,72,153,0.08)] sm:my-4 sm:rounded-[24px]">
         <MobilePackoraHeader products={products} />
         <PackoraIntro />
         <ProductGrid products={products} />

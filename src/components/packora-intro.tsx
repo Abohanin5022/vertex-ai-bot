@@ -32,28 +32,28 @@ const reasons = [
 export function PackoraIntro() {
   return (
     <section className="px-4 pb-3 pt-5 sm:px-6 lg:px-8">
-      <div className="overflow-hidden rounded-[32px] border border-[var(--packora-border)] bg-white shadow-[0_20px_60px_rgba(7,11,42,0.06)]">
-        <div className="grid gap-6 bg-[linear-gradient(135deg,#070B2A,#1766E8)] p-6 text-white lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-8">
+      <div className="overflow-hidden rounded-[24px] border border-[var(--packora-border)] bg-white shadow-[0_20px_60px_rgba(236,72,153,0.08)]">
+        <div className="grid gap-6 bg-[linear-gradient(135deg,#FCE7F3,#FDF2F8)] p-6 text-[var(--packora-navy)] lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-8">
           <div>
-            <p className="text-sm font-semibold text-[#4FE7C5]">
+            <p className="text-sm font-semibold text-[var(--packora-blue)]">
               Packora
             </p>
             <h1 className="mt-3 max-w-3xl text-3xl font-black leading-tight sm:text-4xl">
               كل احتياجات التغليف والبلاستيك في مكان واحد
             </h1>
-            <p className="mt-4 max-w-3xl text-sm leading-8 text-white/78 sm:text-base">
+            <p className="mt-4 max-w-3xl text-sm leading-8 text-[var(--packora-muted)] sm:text-base">
               Packora منصة متخصصة في توفير مستلزمات التغليف والبلاستيك
               للمطاعم والكافيهات ومحلات الحلويات والأسر المنتجة والمتاجر
               بمختلف أحجامها.
             </p>
-            <p className="mt-3 max-w-3xl text-sm leading-8 text-white/78 sm:text-base">
+            <p className="mt-3 max-w-3xl text-sm leading-8 text-[var(--packora-muted)] sm:text-base">
               نوفر منتجات عالية الجودة بأسعار تنافسية مع تجربة طلب سهلة
               وسريعة من خلال الموقع الإلكتروني.
             </p>
 
             <Link
               href="#products"
-              className="mt-6 inline-flex rounded-full bg-[#4FE7C5] px-6 py-3 text-sm font-black text-[#070B2A] transition hover:bg-white"
+              className="mt-6 inline-flex rounded-full bg-[var(--packora-blue)] px-6 py-3 text-sm font-black text-white transition hover:bg-[var(--packora-blue-dark)]"
             >
               تسوق الآن
             </Link>
@@ -66,9 +66,9 @@ export function PackoraIntro() {
               return (
                 <div
                   key={item.title}
-                  className="rounded-[24px] border border-white/12 bg-white/10 p-4 backdrop-blur"
+                  className="rounded-[24px] border border-[var(--packora-border)] bg-white p-4 shadow-[0_12px_30px_rgba(236,72,153,0.08)]"
                 >
-                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-[#1766E8]">
+                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-[var(--packora-light-pink)] text-[var(--packora-blue)]">
                     <Icon size={21} />
                   </div>
                   <p className="mt-3 text-sm font-bold leading-6">
@@ -101,7 +101,7 @@ function InfoBlock({
 }) {
   return (
     <section>
-      <h2 className="text-lg font-black text-[#070B2A]">{title}</h2>
+      <h2 className="text-lg font-black text-[var(--packora-navy)]">{title}</h2>
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
         {items.map((item) => {
           const Icon = item.icon;
@@ -109,12 +109,12 @@ function InfoBlock({
           return (
             <div
               key={item.title}
-              className="rounded-2xl border border-[var(--packora-border)] bg-[#F8FCFF] p-3"
+              className="rounded-2xl border border-[var(--packora-border)] bg-white p-3 shadow-[0_10px_24px_rgba(236,72,153,0.06)]"
             >
-              <div className="grid h-9 w-9 place-items-center rounded-xl bg-[#EAFBFF] text-[#1766E8]">
+              <div className="grid h-9 w-9 place-items-center rounded-xl bg-[var(--packora-light-pink)] text-[var(--packora-blue)]">
                 <Icon size={18} />
               </div>
-              <p className="mt-2 text-xs font-bold leading-5 text-[#334155]">
+              <p className="mt-2 text-xs font-bold leading-5 text-[var(--packora-navy)]">
                 {item.title}
               </p>
             </div>
