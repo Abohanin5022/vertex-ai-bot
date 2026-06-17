@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useMemo, useSyncExternalStore } from "react";
-import { Flame, History, Package, Star, TrendingUp } from "lucide-react";
+import {
+  Flame,
+  History,
+  Package,
+  SearchX,
+  Star,
+  TrendingUp,
+} from "lucide-react";
 import { PackoraProductCard } from "@/components/packora-product-card";
 
 type Product = {
@@ -20,9 +27,9 @@ const packagingCategory = "packaging";
 
 const smartSections = [
   { label: "العروض اليومية", href: "/offers", icon: Flame },
-  { label: "المنتجات السابقة", href: "/packora-1", icon: History },
-  { label: "الأعلى تقييمًا", href: "/packora-1?sort=rating", icon: Star },
   { label: "الأكثر طلبًا", href: "/packora-1?sort=popular", icon: TrendingUp },
+  { label: "الأعلى تقييمًا", href: "/packora-1?sort=rating", icon: Star },
+  { label: "منتجات سابقة", href: "/packora-1", icon: History },
 ];
 
 const fallbackCategories = [
@@ -53,7 +60,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
       new Set(products.map((product) => product.category).filter(Boolean))
     );
 
-    return realCategories.length ? realCategories.slice(0, 8) : fallbackCategories;
+    return realCategories.length ? realCategories.slice(0, 10) : fallbackCategories;
   }, [products]);
 
   const filteredProducts = useMemo(() => {
@@ -78,65 +85,92 @@ export function ProductGrid({ products }: { products: Product[] }) {
 
   return (
     <>
-      <section className="space-y-4 px-4 py-4">
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {smartSections.map((item) => {
-            const Icon = item.icon;
+      <section className="px-4 pb-5 pt-3 sm:px-6 lg:px-8">
+        <div className="rounded-[24px] border border-[var(--packora-border)] bg-white p-4 shadow-[0_16px_36px_rgba(236,72,153,0.07)]">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[var(--packora-blue)]">
+                Packora Store
+              </p>
+              <h2 className="mt-1 text-xl font-black text-[var(--packora-navy)]">
+                أقسام المنتجات
+              </h2>
+            </div>
 
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="inline-flex shrink-0 items-center gap-2 rounded-2xl border border-[var(--packora-border)] bg-white px-3 py-2 text-xs font-semibold text-[var(--packora-navy)] shadow-sm transition hover:border-[var(--packora-blue)] hover:bg-[var(--packora-light-pink)]"
-              >
-                <Icon size={15} className="text-[var(--packora-blue)]" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
+            <span className="rounded-full bg-[var(--packora-light-pink)] px-3 py-1 text-xs font-bold text-[var(--packora-blue)]">
+              {filteredProducts.length} منتج
+            </span>
+          </div>
 
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
-          <CategoryCard label="الكل" href="/packora-1" active={categoryFromUrl === allCategory} />
-          {categories.slice(0, 7).map((category) => (
-            <CategoryCard
-              key={category}
-              label={category}
-              href={`/packora-1?category=${encodeURIComponent(category)}`}
-              active={categoryFromUrl === category}
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+            {smartSections.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--packora-border)] bg-[var(--packora-soft-pink)] px-4 py-2 text-xs font-bold text-[var(--packora-navy)] transition hover:border-[var(--packora-blue)] hover:bg-[var(--packora-light-pink)]"
+                >
+                  <Icon size={15} className="text-[var(--packora-blue)]" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+            <CategoryPill
+              label="الكل"
+              href="/packora-1"
+              active={categoryFromUrl === allCategory}
             />
-          ))}
+            {categories.map((category) => (
+              <CategoryPill
+                key={category}
+                label={category}
+                href={`/packora-1?category=${encodeURIComponent(category)}`}
+                active={categoryFromUrl === category}
+              />
+            ))}
+          </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="mt-5 flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--packora-navy)]">
-              {categoryLabel === allCategory ? "المنتجات" : categoryLabel}
+            <h2 className="text-2xl font-black text-[var(--packora-navy)]">
+              {categoryLabel === allCategory ? "المنتجات المتاحة" : categoryLabel}
             </h2>
+            <p className="mt-1 text-sm text-[var(--packora-muted)]">
+              اختر منتجات التغليف والبلاستيك المناسبة لطلبك.
+            </p>
             {queryFromUrl ? (
-              <p className="mt-0.5 text-xs text-[var(--packora-muted)]">
+              <p className="mt-1 text-xs font-semibold text-[var(--packora-blue)]">
                 نتائج البحث عن: {queryFromUrl}
               </p>
             ) : null}
           </div>
-
-          <span className="rounded-full bg-[var(--packora-light-pink)] px-3 py-1 text-xs font-semibold text-[var(--packora-blue)]">
-            {filteredProducts.length} منتج
-          </span>
         </div>
       </section>
 
       {filteredProducts.length === 0 ? (
-        <section className="px-8 py-20 text-center">
-          <h2 className="text-2xl font-semibold">لا توجد منتجات حالياً</h2>
-          <p className="mt-3 text-base leading-8 text-[#6B7280]">
-            أضف منتجات حقيقية من لوحة التاجر لتظهر هنا.
-          </p>
+        <section className="px-4 pb-28 pt-8 sm:px-6 lg:px-8">
+          <div className="rounded-[28px] border border-[var(--packora-border)] bg-white px-6 py-14 text-center shadow-[0_16px_36px_rgba(236,72,153,0.07)]">
+            <div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-[var(--packora-light-pink)] text-[var(--packora-blue)]">
+              <SearchX size={30} />
+            </div>
+            <h2 className="mt-5 text-2xl font-black text-[var(--packora-navy)]">
+              لا توجد منتجات حاليًا
+            </h2>
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-[var(--packora-muted)]">
+              جرّب تصنيفًا آخر أو أضف منتجات حقيقية من لوحة التاجر لتظهر هنا.
+            </p>
+          </div>
         </section>
       ) : (
         <section
           id="products"
-          className="grid grid-cols-2 gap-2.5 px-3 pb-28 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6"
+          className="grid grid-cols-2 gap-3 px-3 pb-28 sm:grid-cols-3 sm:px-6 lg:grid-cols-5 lg:px-8 xl:grid-cols-6"
         >
           {filteredProducts.map((product) => (
             <PackoraProductCard key={product.id} product={product} />
@@ -147,7 +181,7 @@ export function ProductGrid({ products }: { products: Product[] }) {
   );
 }
 
-function CategoryCard({
+function CategoryPill({
   label,
   href,
   active,
@@ -159,24 +193,14 @@ function CategoryCard({
   return (
     <Link
       href={href}
-      className={`grid h-[92px] place-items-center rounded-2xl border p-2 text-center transition ${
+      className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold transition ${
         active
-          ? "border-[var(--packora-blue)] bg-[var(--packora-light-pink)]"
-          : "border-[var(--packora-border)] bg-white"
+          ? "border-[var(--packora-blue)] bg-[var(--packora-blue)] text-white shadow-[0_10px_22px_rgba(236,72,153,0.18)]"
+          : "border-[var(--packora-border)] bg-white text-[var(--packora-navy)] hover:border-[var(--packora-blue)] hover:bg-[var(--packora-light-pink)]"
       }`}
     >
-      <span
-        className={`grid h-9 w-9 place-items-center rounded-xl ${
-          active
-            ? "bg-[var(--packora-blue)] text-white"
-            : "bg-[var(--packora-soft-pink)] text-[var(--packora-blue)]"
-        }`}
-      >
-        <Package size={18} />
-      </span>
-      <span className="line-clamp-2 text-[11px] font-semibold leading-4 text-[var(--packora-navy)]">
-        {label}
-      </span>
+      <Package size={16} />
+      {label}
     </Link>
   );
 }

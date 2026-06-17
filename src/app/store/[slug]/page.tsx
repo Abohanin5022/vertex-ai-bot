@@ -12,6 +12,7 @@ import {
 import { PackoraBottomNav } from "@/components/packora-bottom-nav";
 import { Price } from "@/components/price";
 import { ProductImage } from "@/components/product-image";
+import { StoreShareButton } from "@/components/store-share-button";
 import { StoreFavoriteButton } from "@/components/store-favorite-button";
 import { mobileConfig } from "@/lib/mobile-config";
 import { prisma } from "@/lib/prisma";
@@ -101,15 +102,15 @@ export default async function StorePage({
 
   if (!merchant) {
     return (
-      <main className="grid min-h-screen place-items-center bg-white p-6">
-        <div className="rounded-[28px] border border-[var(--packora-border)] bg-white p-8 text-center">
+      <main className="grid min-h-screen place-items-center bg-[var(--packora-soft-pink)] p-6">
+        <div className="rounded-[28px] border border-[var(--packora-border)] bg-white p-8 text-center shadow-[0_20px_60px_rgba(236,72,153,0.08)]">
           <h1 className="text-2xl font-semibold text-[var(--packora-navy)]">
             المتجر غير موجود
           </h1>
 
           <Link
             href="/packora-1"
-            className="mt-5 inline-block rounded-full bg-[var(--packora-navy)] px-6 py-3 font-semibold text-white"
+            className="mt-5 inline-block rounded-full bg-[var(--packora-blue)] px-6 py-3 font-semibold text-white"
           >
             الرجوع للمتجر
           </Link>
@@ -124,12 +125,12 @@ export default async function StorePage({
 
   return (
     <main dir="rtl" className={mobileConfig.pageClassName}>
-      <section className="mx-auto max-w-5xl bg-white">
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[var(--packora-border)] bg-white px-5 py-4">
+      <section className="mx-auto max-w-5xl bg-white shadow-[0_20px_60px_rgba(236,72,153,0.08)] md:my-4 md:rounded-[24px]">
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[var(--packora-border)] bg-[linear-gradient(135deg,#FCE7F3,#FDF2F8)] px-5 py-4 md:rounded-t-[24px]">
           <Link
             href="/packora-1"
             aria-label="الرجوع للمتجر"
-            className="grid h-11 w-11 place-items-center rounded-full border border-[var(--packora-border)]"
+            className="grid h-11 w-11 place-items-center rounded-full border border-[var(--packora-border)] bg-white"
           >
             <X size={21} />
           </Link>
@@ -139,21 +140,21 @@ export default async function StorePage({
           <Link
             href="/packora-1/cart"
             aria-label="السلة"
-            className="grid h-11 w-11 place-items-center rounded-full border border-[var(--packora-border)]"
+            className="grid h-11 w-11 place-items-center rounded-full border border-[var(--packora-border)] bg-white"
           >
             <ShoppingCart size={20} />
           </Link>
         </header>
 
         <section className="px-5 py-6">
-          <div className="overflow-hidden rounded-[34px] border border-[var(--packora-border)] bg-white">
-            <div className="h-44 bg-[linear-gradient(135deg,var(--packora-blue),var(--packora-cyan))] md:h-60">
+          <div className="overflow-hidden rounded-[24px] border border-[var(--packora-border)] bg-white shadow-[0_20px_45px_rgba(236,72,153,0.08)]">
+            <div className="h-44 bg-[linear-gradient(135deg,#F9A8D4,#FDF2F8)] md:h-60">
               {merchant.storeBanner ? (
                 <ProductImage
                   src={merchant.storeBanner}
                   alt={storeName}
                   className="h-full w-full object-cover"
-                  fallbackClassName="h-full w-full bg-[linear-gradient(135deg,var(--packora-blue),var(--packora-cyan))]"
+                  fallbackClassName="h-full w-full bg-[linear-gradient(135deg,#F9A8D4,#FDF2F8)]"
                   priority
                 />
               ) : null}
@@ -204,17 +205,20 @@ export default async function StorePage({
                   </div>
                 </div>
 
-                <StoreFavoriteButton
-                  store={{
-                    id: merchant.id,
-                    name: storeName,
-                    slug: merchant.storeSlug || slug,
-                    logo: merchant.storeLogo,
-                    city: merchant.storeCity,
-                    rating: merchant.storeRating,
-                    productCount,
-                  }}
-                />
+                <div className="flex flex-wrap gap-2">
+                  <StoreShareButton slug={merchant.storeSlug || slug} />
+                  <StoreFavoriteButton
+                    store={{
+                      id: merchant.id,
+                      name: storeName,
+                      slug: merchant.storeSlug || slug,
+                      logo: merchant.storeLogo,
+                      city: merchant.storeCity,
+                      rating: merchant.storeRating,
+                      productCount,
+                    }}
+                  />
+                </div>
               </div>
 
               <p className="mt-4 max-w-2xl text-sm leading-7 text-[#6B7280]">
@@ -229,7 +233,7 @@ export default async function StorePage({
                   )}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white"
+                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--packora-blue)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--packora-blue-dark)]"
                 >
                   <MessageCircle size={18} />
                   تواصل واتساب
@@ -239,7 +243,7 @@ export default async function StorePage({
           </div>
 
           <div className="mt-5 grid gap-3 md:grid-cols-3">
-            <section className="rounded-[26px] border border-[var(--packora-border)] bg-white p-5">
+            <section className="rounded-[24px] border border-[var(--packora-border)] bg-white p-5 shadow-[0_12px_26px_rgba(236,72,153,0.06)]">
               <p className="text-sm font-semibold text-[var(--packora-blue)]">
                 التواصل
               </p>
@@ -250,7 +254,7 @@ export default async function StorePage({
               </p>
             </section>
 
-            <section className="rounded-[26px] border border-[var(--packora-border)] bg-white p-5">
+            <section className="rounded-[24px] border border-[var(--packora-border)] bg-white p-5 shadow-[0_12px_26px_rgba(236,72,153,0.06)]">
               <p className="text-sm font-semibold text-[var(--packora-blue)]">
                 سياسة الطلب
               </p>
@@ -259,7 +263,7 @@ export default async function StorePage({
               </p>
             </section>
 
-            <section className="rounded-[26px] border border-[var(--packora-border)] bg-white p-5">
+            <section className="rounded-[24px] border border-[var(--packora-border)] bg-white p-5 shadow-[0_12px_26px_rgba(236,72,153,0.06)]">
               <p className="text-sm font-semibold text-[var(--packora-blue)]">
                 الاسترجاع
               </p>
@@ -290,10 +294,10 @@ export default async function StorePage({
               {merchant.products.map((product) => (
                 <article
                   key={product.id}
-                  className="overflow-hidden rounded-[26px] border border-[var(--packora-border)] bg-white transition hover:-translate-y-1 hover:shadow-lg"
+                  className="overflow-hidden rounded-[24px] border border-[var(--packora-border)] bg-white shadow-[0_10px_24px_rgba(236,72,153,0.05)] transition hover:-translate-y-1 hover:border-[var(--packora-baby-pink)] hover:shadow-[0_18px_36px_rgba(236,72,153,0.12)]"
                 >
                   <Link href={`/packora-1/products/${product.id}`}>
-                    <div className="grid h-44 place-items-center overflow-hidden bg-white">
+                    <div className="grid h-44 place-items-center overflow-hidden bg-[linear-gradient(180deg,#FFFFFF,#FDF2F8)]">
                       <ProductImage
                         src={product.image}
                         alt={product.name}
@@ -304,7 +308,7 @@ export default async function StorePage({
                   </Link>
 
                   <div className="border-t border-[var(--packora-border)] p-4">
-                    <p className="text-[11px] font-semibold text-[#9CA3AF]">
+                    <p className="text-[11px] font-semibold text-[var(--packora-blue)]">
                       {product.category}
                     </p>
 

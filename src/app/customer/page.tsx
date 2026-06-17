@@ -36,7 +36,7 @@ export default async function CustomerPage() {
 
   return (
     <main dir="rtl" className={mobileConfig.pageClassName}>
-      <section className="mx-auto min-h-screen max-w-7xl bg-white shadow-[0_20px_60px_rgba(236,72,153,0.08)] sm:my-4 sm:rounded-[24px]">
+      <section className="mx-auto min-h-screen max-w-7xl overflow-hidden bg-white shadow-[0_20px_60px_rgba(236,72,153,0.08)] sm:my-5 sm:rounded-[24px]">
         <MobilePackoraHeader products={products} />
         <PackoraIntro />
         <ProductGrid products={products} />

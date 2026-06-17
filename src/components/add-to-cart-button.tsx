@@ -9,6 +9,7 @@ type Props = {
   image?: string | null;
   price: number;
   quantity?: number;
+  className?: string;
 };
 
 export function AddToCartButton({
@@ -18,6 +19,7 @@ export function AddToCartButton({
   image,
   price,
   quantity = 1,
+  className,
 }: Props) {
   const addItem = useCartStore((state) => state.addItem);
 
@@ -38,7 +40,10 @@ export function AddToCartButton({
     <button
       type="button"
       onClick={handleAdd}
-      className="w-full rounded-full bg-black py-4 text-center font-semibold text-white transition hover:bg-[#111827]"
+      className={
+        className ||
+        "w-full rounded-full bg-[var(--packora-blue)] py-4 text-center font-semibold text-white transition hover:bg-[var(--packora-blue-dark)]"
+      }
     >
       أضف للسلة
     </button>
