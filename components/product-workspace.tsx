@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Product } from "@/lib/products";
+import { StampBadge } from "@/components/ui/stamp-badge";
 
 const formatter = new Intl.NumberFormat("ar-SA", {
   style: "currency",
@@ -93,12 +94,12 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
   );
 
   return (
-    <section className="mt-6 grid gap-6 xl:grid-cols-[1fr_340px]">
-      <div className="rounded-lg border border-stone-200 bg-white">
-        <div className="grid gap-3 border-b border-stone-200 px-4 py-4 lg:grid-cols-[1fr_auto] lg:items-center">
+    <section className="grid gap-6 xl:grid-cols-[1fr_320px]">
+      <div className="rounded-sm border border-hairline bg-paper">
+        <div className="grid gap-3 border-b border-hairline px-4 py-4 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <h3 className="font-bold">المنتجات</h3>
-            <p className="mt-1 text-sm text-stone-500">
+            <p className="mt-1 text-sm text-ink-soft">
               {filteredProducts.length} من {products.length} منتج
             </p>
           </div>
@@ -111,12 +112,12 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="بحث باسم المنتج أو الوصف"
-                className="h-10 w-full rounded-md border border-stone-300 bg-white px-3 text-sm outline-none transition focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100 sm:w-72"
+                className="h-10 w-full rounded-sm border border-hairline bg-white px-3 text-sm outline-none transition focus:border-tape focus:ring-2 focus:ring-tape/20 sm:w-72"
               />
             </label>
 
             <div
-              className="grid h-10 grid-cols-3 rounded-md border border-stone-300 bg-stone-100 p-1 text-sm"
+              className="grid h-10 grid-cols-3 rounded-sm border border-hairline bg-kraft p-1 text-sm"
               role="group"
               aria-label="تصفية المنتجات حسب المخزون"
             >
@@ -125,10 +126,10 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
                   key={filter.value}
                   type="button"
                   onClick={() => setStockFilter(filter.value)}
-                  className={`rounded px-3 font-semibold transition ${
+                  className={`rounded-sm px-3 font-semibold transition ${
                     stockFilter === filter.value
-                      ? "bg-white text-cyan-700 shadow-sm"
-                      : "text-stone-600 hover:text-stone-950"
+                      ? "bg-white text-tape-deep shadow-sm"
+                      : "text-ink-soft hover:text-ink"
                   }`}
                 >
                   {filter.label}
@@ -140,14 +141,14 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
               type="button"
               onClick={() => downloadCsv(filteredProducts)}
               disabled={filteredProducts.length === 0}
-              className="h-10 rounded-md bg-stone-950 px-4 text-sm font-semibold text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-300"
+              className="h-10 rounded-sm bg-ink px-4 text-sm font-semibold text-paper transition hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink-soft/40"
             >
               تصدير CSV
             </button>
           </div>
         </div>
 
-        <div className="grid gap-3 border-b border-stone-200 px-4 py-3 text-sm text-stone-600 sm:grid-cols-3">
+        <div className="grid gap-3 border-b border-hairline px-4 py-3 font-mono text-sm text-ink-soft sm:grid-cols-3">
           <span>المعروض: {filteredProducts.length}</span>
           <span>المخزون: {filteredStock}</span>
           <span>القيمة: {formatter.format(filteredValue)}</span>
@@ -155,7 +156,7 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-sm">
-            <thead className="bg-stone-100 text-stone-600">
+            <thead className="bg-kraft text-ink-soft">
               <tr>
                 <th className="px-4 py-3 text-right font-semibold">المنتج</th>
                 <th className="px-4 py-3 text-right font-semibold">الوصف</th>
@@ -164,25 +165,28 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
                 <th className="px-4 py-3 text-right font-semibold">الحالة</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-100">
+            <tbody className="divide-y divide-hairline">
               {filteredProducts.map((product) => (
                 <tr key={product.id}>
                   <td className="px-4 py-4 font-semibold">{product.name}</td>
-                  <td className="max-w-md px-4 py-4 text-stone-600">
+                  <td className="max-w-md px-4 py-4 text-ink-soft">
                     {product.description}
                   </td>
-                  <td className="px-4 py-4">{formatter.format(product.price)}</td>
-                  <td className="px-4 py-4">{product.stock}</td>
+                  <td className="px-4 py-4 font-mono">
+                    {formatter.format(product.price)}
+                  </td>
+                  <td className="px-4 py-4 font-mono">{product.stock}</td>
                   <td className="px-4 py-4">
-                    <span
-                      className={`rounded-md px-2 py-1 text-xs font-semibold ${
+                    <StampBadge
+                      label={
                         product.stock <= LOW_STOCK_THRESHOLD
-                          ? "bg-rose-100 text-rose-700"
-                          : "bg-emerald-100 text-emerald-700"
-                      }`}
-                    >
-                      {product.stock <= LOW_STOCK_THRESHOLD ? "منخفض" : "متوفر"}
-                    </span>
+                          ? "منخفض"
+                          : "متوفر"
+                      }
+                      tone={
+                        product.stock <= LOW_STOCK_THRESHOLD ? "alert" : "ok"
+                      }
+                    />
                   </td>
                 </tr>
               ))}
@@ -190,7 +194,7 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
           </table>
 
           {filteredProducts.length === 0 ? (
-            <p className="px-4 py-8 text-center text-sm text-stone-500">
+            <p className="px-4 py-8 text-center text-sm text-ink-soft">
               لا توجد منتجات مطابقة للبحث الحالي.
             </p>
           ) : null}
@@ -198,29 +202,29 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
       </div>
 
       <aside className="space-y-6">
-        <section className="rounded-lg border border-stone-200 bg-white p-4">
+        <section className="rounded-sm border border-hairline bg-paper p-4">
           <h3 className="font-bold">تنبيهات المخزون</h3>
           <div className="mt-4 space-y-3">
             {lowStock.length > 0 ? (
               lowStock.map((product) => (
                 <div
                   key={product.id}
-                  className="rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800"
+                  className="rounded-sm border border-stamp-red-soft bg-stamp-red-soft px-3 py-2 text-sm text-stamp-red"
                 >
                   {product.name}: تبقى {product.stock}
                 </div>
               ))
             ) : (
-              <p className="text-sm text-stone-500">
+              <p className="text-sm text-ink-soft">
                 لا توجد منتجات منخفضة ضمن النتائج الحالية.
               </p>
             )}
           </div>
         </section>
 
-        <section className="rounded-lg border border-stone-200 bg-white p-4">
+        <section className="rounded-sm border border-hairline bg-paper p-4">
           <h3 className="font-bold">حالة الربط</h3>
-          <p className="mt-3 text-sm leading-6 text-stone-600">
+          <p className="mt-3 text-sm leading-6 text-ink-soft">
             عند ضبط متغيرات Supabase العامة، ستقرأ اللوحة جدول المنتجات
             مباشرة. في بيئة التطوير بدون مفاتيح، تظهر بيانات تجريبية حتى يبقى
             البناء والاختبار مستقرين.

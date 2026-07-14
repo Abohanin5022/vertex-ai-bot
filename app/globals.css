@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Kraft & Ink Stamp palette */
+  --color-kraft: #ede6d6;
+  --color-kraft-deep: #ddd2b8;
+  --color-paper: #faf8f3;
+  --color-ink: #1c1917;
+  --color-ink-soft: #57534e;
+  --color-tape: #c8862a;
+  --color-tape-deep: #a86c1e;
+  --color-stamp-red: #b33b2e;
+  --color-stamp-red-soft: #f3e0dc;
+  --color-manifest-cyan: #2e7d8c;
+  --color-manifest-cyan-soft: #dcecee;
+  --color-hairline: #d8cdb4;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-kraft: var(--color-kraft);
+  --color-kraft-deep: var(--color-kraft-deep);
+  --color-paper: var(--color-paper);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-tape: var(--color-tape);
+  --color-tape-deep: var(--color-tape-deep);
+  --color-stamp-red: var(--color-stamp-red);
+  --color-stamp-red-soft: var(--color-stamp-red-soft);
+  --color-manifest-cyan: var(--color-manifest-cyan);
+  --color-manifest-cyan-soft: var(--color-manifest-cyan-soft);
+  --color-hairline: var(--color-hairline);
+  --font-sans: var(--font-plex-arabic);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-kraft);
+  color: var(--color-ink);
+  font-family: var(--font-plex-arabic), "Tahoma", sans-serif;
+}
+
+/* Perforated cut-line: the design's signature divider, styled like the
+   tear line on a packing slip. Used between the sidebar/manifest stub
+   and the main sheet, and between major sections. */
+.perforated {
+  background-image: radial-gradient(
+    circle,
+    var(--color-hairline) 1.4px,
+    transparent 1.6px
+  );
+  background-size: 10px 10px;
+  background-repeat: repeat-x;
+  background-position: center;
+}
+
+.perforated-v {
+  background-image: radial-gradient(
+    circle,
+    var(--color-hairline) 1.4px,
+    transparent 1.6px
+  );
+  background-size: 10px 10px;
+  background-repeat: repeat-y;
+  background-position: center;
+}
+
+/* Subtle kraft-paper fiber texture, kept quiet on purpose */
+.paper-texture {
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgba(28, 25, 23, 0.015) 0px,
+    rgba(28, 25, 23, 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
 }
