@@ -74,11 +74,18 @@ export async function getProducts(): Promise<Product[]> {
     ]);
 
     if (error || !data) {
+      if (error) {
+        console.error("Supabase products query failed:", error.message);
+      }
       return fallbackProducts;
     }
 
     return data.map((product) => normalizeProduct(product));
-  } catch {
+  } catch (error) {
+    console.error(
+      "Supabase products request failed:",
+      error instanceof Error ? error.message : error,
+    );
     return fallbackProducts;
   }
 }

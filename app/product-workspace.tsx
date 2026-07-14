@@ -11,6 +11,8 @@ const formatter = new Intl.NumberFormat("ar-SA", {
 
 type StockFilter = "all" | "available" | "low";
 
+const LOW_STOCK_THRESHOLD = 20;
+
 type ProductWorkspaceProps = {
   products: Product[];
 };
@@ -38,7 +40,7 @@ function downloadCsv(products: Product[]) {
     product.description,
     product.price,
     product.stock,
-    product.stock <= 20 ? "منخفض" : "متوفر",
+    product.stock <= LOW_STOCK_THRESHOLD ? "منخفض" : "متوفر",
   ]);
   const csv = [header, ...rows]
     .map((row) => row.map(escapeCsvValue).join(","))
@@ -71,14 +73,16 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
           .includes(normalizedQuery);
       const matchesStock =
         stockFilter === "all" ||
-        (stockFilter === "low" && product.stock <= 20) ||
-        (stockFilter === "available" && product.stock > 20);
+        (stockFilter === "low" && product.stock <= LOW_STOCK_THRESHOLD) ||
+        (stockFilter === "available" && product.stock > LOW_STOCK_THRESHOLD);
 
       return matchesQuery && matchesStock;
     });
   }, [products, query, stockFilter]);
 
-  const lowStock = filteredProducts.filter((product) => product.stock <= 20);
+  const lowStock = filteredProducts.filter(
+    (product) => product.stock <= LOW_STOCK_THRESHOLD,
+  );
   const filteredStock = filteredProducts.reduce(
     (sum, product) => sum + product.stock,
     0,
@@ -172,12 +176,12 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
                   <td className="px-4 py-4">
                     <span
                       className={`rounded-md px-2 py-1 text-xs font-semibold ${
-                        product.stock <= 20
+                        product.stock <= LOW_STOCK_THRESHOLD
                           ? "bg-rose-100 text-rose-700"
                           : "bg-emerald-100 text-emerald-700"
                       }`}
                     >
-                      {product.stock <= 20 ? "منخفض" : "متوفر"}
+                      {product.stock <= LOW_STOCK_THRESHOLD ? "منخفض" : "متوفر"}
                     </span>
                   </td>
                 </tr>
