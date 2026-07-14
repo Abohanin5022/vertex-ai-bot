@@ -1,5 +1,8 @@
+import Link from "next/link";
 import { getProducts } from "@/lib/products";
-import { ProductWorkspace } from "./product-workspace";
+import { getFetchMetrics, average } from "@/lib/metrics-store";
+import { PerforatedDivider } from "@/components/ui/perforated-divider";
+import { StampBadge } from "@/components/ui/stamp-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -9,21 +12,7 @@ const formatter = new Intl.NumberFormat("ar-SA", {
   maximumFractionDigits: 0,
 });
 
-const navigationItems = [
-  "الرئيسية",
-  "الطلبات",
-  "المنتجات",
-  "المخزون",
-  "الفواتير",
-  "التقارير",
-];
-
-const operations = [
-  { label: "طلبات اليوم", value: "84", tone: "border-cyan-500" },
-  { label: "قيد التجهيز", value: "17", tone: "border-amber-500" },
-  { label: "جاهزة للشحن", value: "31", tone: "border-emerald-500" },
-  { label: "تنبيهات مخزون", value: "6", tone: "border-rose-500" },
-];
+const LOW_STOCK_THRESHOLD = 20;
 
 export default async function HomePage() {
   const products = await getProducts();
@@ -32,73 +21,100 @@ export default async function HomePage() {
     (sum, product) => sum + product.stock * product.price,
     0,
   );
+  const lowStockProducts = products.filter(
+    (product) => product.stock <= LOW_STOCK_THRESHOLD,
+  );
+
+  const fetchMetrics = getFetchMetrics();
+  const avgLatency = average(fetchMetrics.map((entry) => entry.durationMs));
+  const lastMetric = fetchMetrics[fetchMetrics.length - 1];
+
+  const stats = [
+    { label: "إجمالي المنتجات", value: String(products.length) },
+    { label: "إجمالي المخزون", value: String(totalStock) },
+    { label: "قيمة المخزون", value: formatter.format(inventoryValue) },
+    { label: "تنبيهات مخزون", value: String(lowStockProducts.length) },
+  ];
 
   return (
-    <main dir="rtl" className="min-h-screen bg-stone-50 text-stone-950">
-      <div className="grid min-h-screen lg:grid-cols-[256px_1fr]">
-        <aside className="border-b border-stone-200 bg-white px-5 py-5 lg:border-b-0 lg:border-l">
-          <div className="flex items-center justify-between gap-4 lg:block">
-            <div>
-              <p className="text-sm font-semibold text-cyan-700">Packora</p>
-              <h1 className="text-2xl font-bold">لوحة التشغيل</h1>
-            </div>
-            <div className="rounded-md border border-stone-200 px-3 py-2 text-sm text-stone-600 lg:mt-6">
-              إصدار مباشر
-            </div>
+    <div>
+      <header className="pb-5">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-tape-deep">
+          نظرة عامة
+        </p>
+        <h2 className="mt-2 text-3xl font-bold tracking-normal">
+          متابعة المخزون والمنتجات من مكان واحد
+        </h2>
+      </header>
+
+      <PerforatedDivider />
+
+      <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {stats.map((item) => (
+          <article
+            key={item.label}
+            className="rounded-sm border border-hairline bg-paper p-4"
+          >
+            <p className="text-sm text-ink-soft">{item.label}</p>
+            <p className="mt-3 font-mono text-3xl font-bold">{item.value}</p>
+          </article>
+        ))}
+      </section>
+
+      <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="rounded-sm border border-hairline bg-paper p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold">تنبيهات مخزون منخفض</h3>
+            <Link
+              href="/products"
+              className="text-sm font-semibold text-tape-deep hover:underline"
+            >
+              عرض كل المنتجات ←
+            </Link>
           </div>
-
-          <nav className="mt-6 flex gap-2 overflow-x-auto lg:block lg:space-y-1">
-            {navigationItems.map((item, index) => (
-              <a
-                key={item}
-                href="#"
-                className={`block shrink-0 rounded-md px-3 py-2 text-sm font-medium ${
-                  index === 0
-                    ? "bg-stone-950 text-white"
-                    : "text-stone-700 hover:bg-stone-100"
-                }`}
-              >
-                {item}
-              </a>
-            ))}
-          </nav>
-        </aside>
-
-        <section className="px-4 py-5 sm:px-6 lg:px-8">
-          <header className="flex flex-col gap-4 border-b border-stone-200 pb-5 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm font-semibold text-cyan-700">
-                إدارة الطلبات والتغليف
+          <div className="mt-4 space-y-2">
+            {lowStockProducts.length > 0 ? (
+              lowStockProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex items-center justify-between rounded-sm border border-hairline px-3 py-2 text-sm"
+                >
+                  <span>{product.name}</span>
+                  <StampBadge label={`تبقى ${product.stock}`} tone="alert" />
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-ink-soft">
+                لا توجد منتجات منخفضة المخزون حاليًا.
               </p>
-              <h2 className="mt-2 text-3xl font-bold tracking-normal">
-                متابعة المخزون والمنتجات من مكان واحد
-              </h2>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-sm sm:flex">
-              <span className="rounded-md border border-stone-200 bg-white px-3 py-2">
-                المخزون: {totalStock}
-              </span>
-              <span className="rounded-md border border-stone-200 bg-white px-3 py-2">
-                القيمة: {formatter.format(inventoryValue)}
-              </span>
-            </div>
-          </header>
+            )}
+          </div>
+        </div>
 
-          <section className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {operations.map((item) => (
-              <article
-                key={item.label}
-                className={`rounded-lg border bg-white p-4 ${item.tone}`}
-              >
-                <p className="text-sm text-stone-600">{item.label}</p>
-                <p className="mt-3 text-3xl font-bold">{item.value}</p>
-              </article>
-            ))}
-          </section>
-
-          <ProductWorkspace products={products} />
-        </section>
-      </div>
-    </main>
+        <div className="rounded-sm border border-hairline bg-paper p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold">نبض التطبيق</h3>
+            <Link
+              href="/performance"
+              className="text-sm font-semibold text-tape-deep hover:underline"
+            >
+              التفاصيل ←
+            </Link>
+          </div>
+          <p className="mt-3 text-sm text-ink-soft">
+            آخر زمن استجابة لجلب بيانات المنتجات:
+          </p>
+          <p className="mt-1 font-mono text-2xl font-bold">
+            {lastMetric ? `${lastMetric.durationMs.toFixed(0)} ms` : "—"}
+          </p>
+          <p className="mt-3 text-sm text-ink-soft">
+            المتوسط على آخر {fetchMetrics.length} طلب:{" "}
+            <span className="font-mono font-semibold text-ink">
+              {avgLatency ? `${avgLatency.toFixed(0)} ms` : "—"}
+            </span>
+          </p>
+        </div>
+      </section>
+    </div>
   );
 }

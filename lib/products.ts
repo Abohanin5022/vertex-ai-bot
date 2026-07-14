@@ -1,4 +1,5 @@
 import { createSupabaseClient, hasSupabaseConfig } from "@/lib/supabase";
+import { recordFetchMetric } from "@/lib/metrics-store";
 
 export type Product = {
   id: string | number;
@@ -58,7 +59,13 @@ function normalizeProduct(product: Record<string, unknown>): Product {
 }
 
 export async function getProducts(): Promise<Product[]> {
+  const startedAt = performance.now();
+
   if (!hasSupabaseConfig()) {
+    recordFetchMetric({
+      durationMs: performance.now() - startedAt,
+      source: "fallback",
+    });
     return fallbackProducts;
   }
 
@@ -77,15 +84,27 @@ export async function getProducts(): Promise<Product[]> {
       if (error) {
         console.error("Supabase products query failed:", error.message);
       }
+      recordFetchMetric({
+        durationMs: performance.now() - startedAt,
+        source: "fallback",
+      });
       return fallbackProducts;
     }
 
+    recordFetchMetric({
+      durationMs: performance.now() - startedAt,
+      source: "supabase",
+    });
     return data.map((product) => normalizeProduct(product));
   } catch (error) {
     console.error(
       "Supabase products request failed:",
       error instanceof Error ? error.message : error,
     );
+    recordFetchMetric({
+      durationMs: performance.now() - startedAt,
+      source: "fallback",
+    });
     return fallbackProducts;
   }
 }

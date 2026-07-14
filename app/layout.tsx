@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, JetBrains_Mono } from "next/font/google";
+import { AppShell } from "@/components/ui/app-shell";
+import { WebVitalsReporter } from "@/components/web-vitals-reporter";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const plexArabic = IBM_Plex_Sans_Arabic({
+  variable: "--font-plex-arabic",
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Packora Dashboard",
-  description: "Operations dashboard for Packora products and inventory",
+  title: "Packora — لوحة التشغيل",
+  description: "لوحة تشغيل المخزون والمنتجات لـ Packora",
 };
 
 export default function RootLayout({
@@ -26,9 +30,12 @@ export default function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${plexArabic.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="paper-texture min-h-full flex flex-col">
+        <WebVitalsReporter />
+        <AppShell>{children}</AppShell>
+      </body>
     </html>
   );
 }
