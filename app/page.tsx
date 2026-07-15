@@ -3,6 +3,7 @@ import { getProducts } from "@/lib/products";
 import { getFetchMetrics, average } from "@/lib/metrics-store";
 import { PerforatedDivider } from "@/components/ui/perforated-divider";
 import { StampBadge } from "@/components/ui/stamp-badge";
+import { InventoryAnalytics } from "@/components/inventory-analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -115,6 +116,8 @@ export default async function HomePage() {
           </p>
         </div>
       </section>
+
+      <InventoryAnalytics products={products} />
     </div>
   );
 }
