@@ -58,6 +58,99 @@ function normalizeProduct(product: Record<string, unknown>): Product {
   };
 }
 
+export type ProductInput = {
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+};
+
+export class ProductsNotConfiguredError extends Error {}
+
+export function validateProductInput(input: unknown): ProductInput {
+  const value = (input ?? {}) as Record<string, unknown>;
+  const name = typeof value.name === "string" ? value.name.trim() : "";
+  const description =
+    typeof value.description === "string" ? value.description.trim() : "";
+  const price = Number(value.price);
+  const stock = Number(value.stock);
+
+  if (!name) {
+    throw new Error("اسم المنتج مطلوب.");
+  }
+
+  if (!Number.isFinite(price) || price < 0) {
+    throw new Error("السعر يجب أن يكون رقمًا صالحًا وغير سالب.");
+  }
+
+  if (!Number.isFinite(stock) || stock < 0 || !Number.isInteger(stock)) {
+    throw new Error("المخزون يجب أن يكون رقمًا صحيحًا وغير سالب.");
+  }
+
+  return { name, description, price, stock };
+}
+
+export async function createProduct(input: ProductInput): Promise<Product> {
+  if (!hasSupabaseConfig()) {
+    throw new ProductsNotConfiguredError(
+      "لا يمكن إضافة منتجات قبل ربط Supabase."
+    );
+  }
+
+  const supabase = createSupabaseClient();
+  const { data, error } = await supabase
+    .from("products")
+    .insert(input)
+    .select("id,name,description,price,stock")
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message || "تعذر إضافة المنتج.");
+  }
+
+  return normalizeProduct(data);
+}
+
+export async function updateProduct(
+  id: string,
+  input: ProductInput,
+): Promise<Product> {
+  if (!hasSupabaseConfig()) {
+    throw new ProductsNotConfiguredError(
+      "لا يمكن تعديل منتجات قبل ربط Supabase."
+    );
+  }
+
+  const supabase = createSupabaseClient();
+  const { data, error } = await supabase
+    .from("products")
+    .update(input)
+    .eq("id", id)
+    .select("id,name,description,price,stock")
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message || "تعذر تعديل المنتج.");
+  }
+
+  return normalizeProduct(data);
+}
+
+export async function deleteProduct(id: string): Promise<void> {
+  if (!hasSupabaseConfig()) {
+    throw new ProductsNotConfiguredError(
+      "لا يمكن حذف منتجات قبل ربط Supabase."
+    );
+  }
+
+  const supabase = createSupabaseClient();
+  const { error } = await supabase.from("products").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(error.message || "تعذر حذف المنتج.");
+  }
+}
+
 export async function getProducts(): Promise<Product[]> {
   const startedAt = performance.now();
 

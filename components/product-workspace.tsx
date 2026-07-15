@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/products";
 import { StampBadge } from "@/components/ui/stamp-badge";
+import { ProductFormModal } from "@/components/product-form-modal";
 
 const formatter = new Intl.NumberFormat("ar-SA", {
   style: "currency",
@@ -16,6 +18,7 @@ const LOW_STOCK_THRESHOLD = 20;
 
 type ProductWorkspaceProps = {
   products: Product[];
+  isSupabaseConfigured: boolean;
 };
 
 const filters: { label: string; value: StockFilter }[] = [
@@ -58,9 +61,45 @@ function downloadCsv(products: Product[]) {
   URL.revokeObjectURL(url);
 }
 
-export function ProductWorkspace({ products }: ProductWorkspaceProps) {
+export function ProductWorkspace({
+  products,
+  isSupabaseConfigured,
+}: ProductWorkspaceProps) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
+  const [formTarget, setFormTarget] = useState<
+    { mode: "create" } | { mode: "edit"; product: Product } | null
+  >(null);
+  const [deletingId, setDeletingId] = useState<Product["id"] | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  async function handleDelete(product: Product) {
+    if (!window.confirm(`تأكيد حذف "${product.name}"؟`)) {
+      return;
+    }
+
+    setDeleteError(null);
+    setDeletingId(product.id);
+
+    try {
+      const response = await fetch(`/api/products/${product.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        setDeleteError(data?.error || "تعذر حذف المنتج.");
+        return;
+      }
+
+      router.refresh();
+    } catch {
+      setDeleteError("تعذر الاتصال بالخادم. حاول مرة أخرى.");
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("ar-SA");
@@ -145,8 +184,35 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
             >
               تصدير CSV
             </button>
+
+            <button
+              type="button"
+              onClick={() => setFormTarget({ mode: "create" })}
+              disabled={!isSupabaseConfigured}
+              title={
+                isSupabaseConfigured
+                  ? undefined
+                  : "اربط Supabase أولًا لإضافة منتجات جديدة"
+              }
+              className="h-10 rounded-sm border border-tape-deep px-4 text-sm font-semibold text-tape-deep transition hover:bg-tape-deep/10 disabled:cursor-not-allowed disabled:border-hairline disabled:text-ink-soft/60"
+            >
+              + إضافة منتج
+            </button>
           </div>
         </div>
+
+        {!isSupabaseConfigured ? (
+          <p className="border-b border-hairline bg-kraft px-4 py-2 text-sm text-ink-soft">
+            اللوحة تعرض بيانات تجريبية حاليًا (Supabase غير مربوط) — الإضافة
+            والتعديل والحذف معطّلة إلى أن يتم الربط.
+          </p>
+        ) : null}
+
+        {deleteError ? (
+          <p className="border-b border-hairline bg-stamp-red-soft px-4 py-2 text-sm text-stamp-red">
+            {deleteError}
+          </p>
+        ) : null}
 
         <div className="grid gap-3 border-b border-hairline px-4 py-3 font-mono text-sm text-ink-soft sm:grid-cols-3">
           <span>المعروض: {filteredProducts.length}</span>
@@ -163,6 +229,9 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
                 <th className="px-4 py-3 text-right font-semibold">السعر</th>
                 <th className="px-4 py-3 text-right font-semibold">المخزون</th>
                 <th className="px-4 py-3 text-right font-semibold">الحالة</th>
+                <th className="px-4 py-3 text-right font-semibold">
+                  الإجراءات
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-hairline">
@@ -187,6 +256,30 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
                         product.stock <= LOW_STOCK_THRESHOLD ? "alert" : "ok"
                       }
                     />
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormTarget({ mode: "edit", product })
+                        }
+                        disabled={!isSupabaseConfigured}
+                        className="rounded-sm border border-hairline px-2.5 py-1 text-xs font-semibold text-ink-soft transition hover:bg-kraft-deep/60 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        تعديل
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(product)}
+                        disabled={
+                          !isSupabaseConfigured || deletingId === product.id
+                        }
+                        className="rounded-sm border border-stamp-red-soft px-2.5 py-1 text-xs font-semibold text-stamp-red transition hover:bg-stamp-red-soft disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {deletingId === product.id ? "..." : "حذف"}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -231,6 +324,17 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
           </p>
         </section>
       </aside>
+
+      {formTarget ? (
+        <ProductFormModal
+          product={formTarget.mode === "edit" ? formTarget.product : undefined}
+          onClose={() => setFormTarget(null)}
+          onSaved={() => {
+            setFormTarget(null);
+            router.refresh();
+          }}
+        />
+      ) : null}
     </section>
   );
 }
