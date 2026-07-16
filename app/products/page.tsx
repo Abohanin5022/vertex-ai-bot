@@ -1,4 +1,5 @@
 import { getProducts } from "@/lib/products";
+import { hasSupabaseConfig } from "@/lib/supabase";
 import { ProductWorkspace } from "@/components/product-workspace";
 import { PerforatedDivider } from "@/components/ui/perforated-divider";
 
@@ -19,7 +20,10 @@ export default async function ProductsPage() {
       </header>
       <PerforatedDivider />
       <div className="mt-6">
-        <ProductWorkspace products={products} />
+        <ProductWorkspace
+          products={products}
+          isSupabaseConfigured={hasSupabaseConfig()}
+        />
       </div>
     </div>
   );
