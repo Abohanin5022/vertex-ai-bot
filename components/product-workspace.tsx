@@ -11,6 +11,8 @@ const formatter = new Intl.NumberFormat("ar-SA", {
 });
 
 type StockFilter = "all" | "available" | "low";
+type SortKey = "name" | "price" | "stock";
+type SortDirection = "asc" | "desc";
 
 const LOW_STOCK_THRESHOLD = 20;
 
@@ -58,9 +60,38 @@ function downloadCsv(products: Product[]) {
   URL.revokeObjectURL(url);
 }
 
+function sortIndicator(
+  key: SortKey,
+  sort: { key: SortKey; direction: SortDirection } | null,
+) {
+  if (!sort || sort.key !== key) {
+    return null;
+  }
+
+  return sort.direction === "asc" ? "▲" : "▼";
+}
+
 export function ProductWorkspace({ products }: ProductWorkspaceProps) {
   const [query, setQuery] = useState("");
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
+  const [sort, setSort] = useState<{
+    key: SortKey;
+    direction: SortDirection;
+  } | null>(null);
+
+  function toggleSort(key: SortKey) {
+    setSort((current) => {
+      if (!current || current.key !== key) {
+        return { key, direction: "asc" };
+      }
+
+      if (current.direction === "asc") {
+        return { key, direction: "desc" };
+      }
+
+      return null;
+    });
+  }
 
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("ar-SA");
@@ -80,6 +111,22 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
       return matchesQuery && matchesStock;
     });
   }, [products, query, stockFilter]);
+
+  const sortedProducts = useMemo(() => {
+    if (!sort) {
+      return filteredProducts;
+    }
+
+    const direction = sort.direction === "asc" ? 1 : -1;
+
+    return [...filteredProducts].sort((a, b) => {
+      if (sort.key === "name") {
+        return a.name.localeCompare(b.name, "ar") * direction;
+      }
+
+      return (a[sort.key] - b[sort.key]) * direction;
+    });
+  }, [filteredProducts, sort]);
 
   const lowStock = filteredProducts.filter(
     (product) => product.stock <= LOW_STOCK_THRESHOLD,
@@ -139,8 +186,8 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
 
             <button
               type="button"
-              onClick={() => downloadCsv(filteredProducts)}
-              disabled={filteredProducts.length === 0}
+              onClick={() => downloadCsv(sortedProducts)}
+              disabled={sortedProducts.length === 0}
               className="h-10 rounded-sm bg-ink px-4 text-sm font-semibold text-paper transition hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink-soft/40"
             >
               تصدير CSV
@@ -158,15 +205,48 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
           <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-kraft text-ink-soft">
               <tr>
-                <th className="px-4 py-3 text-right font-semibold">المنتج</th>
+                <th className="px-4 py-3 text-right font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => toggleSort("name")}
+                    className="inline-flex items-center gap-1 transition hover:text-ink"
+                  >
+                    المنتج
+                    <span className="text-[10px]">
+                      {sortIndicator("name", sort)}
+                    </span>
+                  </button>
+                </th>
                 <th className="px-4 py-3 text-right font-semibold">الوصف</th>
-                <th className="px-4 py-3 text-right font-semibold">السعر</th>
-                <th className="px-4 py-3 text-right font-semibold">المخزون</th>
+                <th className="px-4 py-3 text-right font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => toggleSort("price")}
+                    className="inline-flex items-center gap-1 transition hover:text-ink"
+                  >
+                    السعر
+                    <span className="text-[10px]">
+                      {sortIndicator("price", sort)}
+                    </span>
+                  </button>
+                </th>
+                <th className="px-4 py-3 text-right font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => toggleSort("stock")}
+                    className="inline-flex items-center gap-1 transition hover:text-ink"
+                  >
+                    المخزون
+                    <span className="text-[10px]">
+                      {sortIndicator("stock", sort)}
+                    </span>
+                  </button>
+                </th>
                 <th className="px-4 py-3 text-right font-semibold">الحالة</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-hairline">
-              {filteredProducts.map((product) => (
+              {sortedProducts.map((product) => (
                 <tr key={product.id}>
                   <td className="px-4 py-4 font-semibold">{product.name}</td>
                   <td className="max-w-md px-4 py-4 text-ink-soft">
@@ -193,7 +273,7 @@ export function ProductWorkspace({ products }: ProductWorkspaceProps) {
             </tbody>
           </table>
 
-          {filteredProducts.length === 0 ? (
+          {sortedProducts.length === 0 ? (
             <p className="px-4 py-8 text-center text-sm text-ink-soft">
               لا توجد منتجات مطابقة للبحث الحالي.
             </p>
