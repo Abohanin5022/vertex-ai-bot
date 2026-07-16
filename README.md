@@ -32,6 +32,15 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 When the variables are not configured, the dashboard renders sample inventory
 data so local builds and CI checks remain stable.
 
+### Supabase schema
+
+The `products` table needs a `category` text column (nullable is fine — rows
+without one fall back to "عام" in the UI):
+
+```sql
+alter table products add column if not exists category text;
+```
+
 ## Project Checks
 
 Run the full local verification suite before pushing changes:
