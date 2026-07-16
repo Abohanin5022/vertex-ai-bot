@@ -101,11 +101,62 @@ function StockStatusSplit({ products }: { products: Product[] }) {
   );
 }
 
+function CategoryBreakdown({ products }: { products: Product[] }) {
+  const totalsByCategory = new Map<string, number>();
+
+  for (const product of products) {
+    const current = totalsByCategory.get(product.category) ?? 0;
+    totalsByCategory.set(product.category, current + product.price * product.stock);
+  }
+
+  const ranked = Array.from(totalsByCategory.entries())
+    .map(([category, value]) => ({ category, value }))
+    .sort((a, b) => b.value - a.value);
+
+  const maxValue = Math.max(...ranked.map((entry) => entry.value), 1);
+  const palette = ["bg-tape", "bg-manifest-cyan", "bg-stamp-red", "bg-ink-soft"];
+
+  return (
+    <div className="rounded-sm border border-hairline bg-paper p-4">
+      <h3 className="font-bold">قيمة المخزون حسب التصنيف</h3>
+      <p className="mt-1 text-sm text-ink-soft">مجموع السعر × المخزون لكل تصنيف</p>
+
+      {ranked.length === 0 ? (
+        <p className="mt-4 text-sm text-ink-soft">لا توجد منتجات بعد.</p>
+      ) : (
+        <div className="mt-5 space-y-3">
+          {ranked.map((entry, index) => (
+            <div key={entry.category}>
+              <div className="mb-1 flex items-baseline justify-between gap-2 text-sm">
+                <span className="truncate font-semibold">{entry.category}</span>
+                <span className="shrink-0 font-mono text-ink-soft">
+                  {currencyFormatter.format(entry.value)}
+                </span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-kraft">
+                <div
+                  className={`h-full rounded-full ${palette[index % palette.length]}`}
+                  style={{
+                    width: `${Math.max((entry.value / maxValue) * 100, 3)}%`,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function InventoryAnalytics({ products }: { products: Product[] }) {
   return (
-    <section className="mt-6 grid gap-6 lg:grid-cols-2">
-      <TopProductsByValue products={products} />
-      <StockStatusSplit products={products} />
+    <section className="mt-6 space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TopProductsByValue products={products} />
+        <StockStatusSplit products={products} />
+      </div>
+      <CategoryBreakdown products={products} />
     </section>
   );
 }

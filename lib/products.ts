@@ -7,7 +7,10 @@ export type Product = {
   description: string;
   price: number;
   stock: number;
+  category: string;
 };
+
+export const DEFAULT_CATEGORY = "عام";
 
 const fallbackProducts: Product[] = [
   {
@@ -16,6 +19,7 @@ const fallbackProducts: Product[] = [
     description: "علب صلبة للمتاجر والمطاعم مع مساحة للشعار.",
     price: 18,
     stock: 64,
+    category: "علب",
   },
   {
     id: "sample-2",
@@ -23,6 +27,7 @@ const fallbackProducts: Product[] = [
     description: "أكياس مقاومة للرطوبة مناسبة للطلبات اليومية.",
     price: 7,
     stock: 18,
+    category: "أكياس",
   },
   {
     id: "sample-3",
@@ -30,6 +35,7 @@ const fallbackProducts: Product[] = [
     description: "كراتين متعددة المقاسات للتخزين والشحن.",
     price: 12,
     stock: 42,
+    category: "كراتين",
   },
   {
     id: "sample-4",
@@ -37,6 +43,7 @@ const fallbackProducts: Product[] = [
     description: "ملصقات باركود وفواتير للشحن السريع.",
     price: 4,
     stock: 12,
+    category: "ملصقات",
   },
 ];
 
@@ -55,6 +62,10 @@ function normalizeProduct(product: Record<string, unknown>): Product {
     description: String(product.description ?? "لا يوجد وصف متاح."),
     price: Number(product.price ?? 0),
     stock: Number(product.stock ?? 0),
+    category:
+      typeof product.category === "string" && product.category.trim()
+        ? product.category.trim()
+        : DEFAULT_CATEGORY,
   };
 }
 
@@ -63,6 +74,7 @@ export type ProductInput = {
   description: string;
   price: number;
   stock: number;
+  category: string;
 };
 
 export class ProductsNotConfiguredError extends Error {}
@@ -72,6 +84,10 @@ export function validateProductInput(input: unknown): ProductInput {
   const name = typeof value.name === "string" ? value.name.trim() : "";
   const description =
     typeof value.description === "string" ? value.description.trim() : "";
+  const category =
+    typeof value.category === "string" && value.category.trim()
+      ? value.category.trim()
+      : DEFAULT_CATEGORY;
   const price = Number(value.price);
   const stock = Number(value.stock);
 
@@ -87,7 +103,7 @@ export function validateProductInput(input: unknown): ProductInput {
     throw new Error("المخزون يجب أن يكون رقمًا صحيحًا وغير سالب.");
   }
 
-  return { name, description, price, stock };
+  return { name, description, price, stock, category };
 }
 
 export async function createProduct(input: ProductInput): Promise<Product> {
@@ -101,7 +117,7 @@ export async function createProduct(input: ProductInput): Promise<Product> {
   const { data, error } = await supabase
     .from("products")
     .insert(input)
-    .select("id,name,description,price,stock")
+    .select("id,name,description,price,stock,category")
     .single();
 
   if (error || !data) {
@@ -126,7 +142,7 @@ export async function updateProduct(
     .from("products")
     .update(input)
     .eq("id", id)
-    .select("id,name,description,price,stock")
+    .select("id,name,description,price,stock,category")
     .single();
 
   if (error || !data) {
@@ -168,7 +184,7 @@ export async function getProducts(): Promise<Product[]> {
     const { data, error } = await Promise.race([
       supabase
         .from("products")
-        .select("id,name,description,price,stock")
+        .select("id,name,description,price,stock,category")
         .order("name", { ascending: true }),
       timeoutAfter(2500),
     ]);

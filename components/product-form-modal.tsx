@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import type { Product } from "@/lib/products";
+import { DEFAULT_CATEGORY, type Product } from "@/lib/products";
 
 export type ProductFormValues = {
   name: string;
   description: string;
   price: string;
   stock: string;
+  category: string;
 };
 
 function toFormValues(product?: Product): ProductFormValues {
@@ -16,15 +17,18 @@ function toFormValues(product?: Product): ProductFormValues {
     description: product?.description ?? "",
     price: product ? String(product.price) : "",
     stock: product ? String(product.stock) : "",
+    category: product?.category ?? DEFAULT_CATEGORY,
   };
 }
 
 export function ProductFormModal({
   product,
+  existingCategories,
   onClose,
   onSaved,
 }: {
   product?: Product;
+  existingCategories: string[];
   onClose: () => void;
   onSaved: () => void;
 }) {
@@ -52,6 +56,7 @@ export function ProductFormModal({
       description: values.description,
       price: Number(values.price),
       stock: Number(values.stock),
+      category: values.category,
     };
 
     try {
@@ -119,6 +124,27 @@ export function ProductFormModal({
               rows={3}
               className="mt-1 w-full rounded-sm border border-hairline bg-white px-3 py-2 text-sm outline-none focus:border-tape focus:ring-2 focus:ring-tape/20"
             />
+          </label>
+
+          <label className="block">
+            <span className="text-sm font-semibold text-ink-soft">
+              التصنيف
+            </span>
+            <input
+              type="text"
+              list="product-category-options"
+              value={values.category}
+              onChange={(event) =>
+                updateField("category", event.target.value)
+              }
+              placeholder={DEFAULT_CATEGORY}
+              className="mt-1 h-10 w-full rounded-sm border border-hairline bg-white px-3 text-sm outline-none focus:border-tape focus:ring-2 focus:ring-tape/20"
+            />
+            <datalist id="product-category-options">
+              {existingCategories.map((category) => (
+                <option key={category} value={category} />
+              ))}
+            </datalist>
           </label>
 
           <div className="grid grid-cols-2 gap-3">

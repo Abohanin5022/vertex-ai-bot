@@ -40,9 +40,10 @@ function escapeCsvValue(value: string | number) {
 }
 
 function downloadCsv(products: Product[]) {
-  const header = ["المنتج", "الوصف", "السعر", "المخزون", "الحالة"];
+  const header = ["المنتج", "التصنيف", "الوصف", "السعر", "المخزون", "الحالة"];
   const rows = products.map((product) => [
     product.name,
+    product.category,
     product.description,
     product.price,
     product.stock,
@@ -81,6 +82,7 @@ export function ProductWorkspace({
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [stockFilter, setStockFilter] = useState<StockFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [sort, setSort] = useState<{
     key: SortKey;
     direction: SortDirection;
@@ -132,6 +134,12 @@ export function ProductWorkspace({
     }
   }
 
+  const existingCategories = useMemo(() => {
+    return Array.from(new Set(products.map((product) => product.category))).sort(
+      (a, b) => a.localeCompare(b, "ar"),
+    );
+  }, [products]);
+
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase("ar-SA");
 
@@ -146,10 +154,12 @@ export function ProductWorkspace({
         stockFilter === "all" ||
         (stockFilter === "low" && product.stock <= LOW_STOCK_THRESHOLD) ||
         (stockFilter === "available" && product.stock > LOW_STOCK_THRESHOLD);
+      const matchesCategory =
+        categoryFilter === "all" || product.category === categoryFilter;
 
-      return matchesQuery && matchesStock;
+      return matchesQuery && matchesStock && matchesCategory;
     });
-  }, [products, query, stockFilter]);
+  }, [products, query, stockFilter, categoryFilter]);
 
   const sortedProducts = useMemo(() => {
     if (!sort) {
@@ -223,6 +233,20 @@ export function ProductWorkspace({
               ))}
             </div>
 
+            <select
+              value={categoryFilter}
+              onChange={(event) => setCategoryFilter(event.target.value)}
+              aria-label="تصفية حسب التصنيف"
+              className="h-10 rounded-sm border border-hairline bg-white px-3 text-sm outline-none focus:border-tape focus:ring-2 focus:ring-tape/20"
+            >
+              <option value="all">كل التصنيفات</option>
+              {existingCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+
             <button
               type="button"
               onClick={() => downloadCsv(sortedProducts)}
@@ -283,6 +307,9 @@ export function ProductWorkspace({
                     </span>
                   </button>
                 </th>
+                <th className="px-4 py-3 text-right font-semibold">
+                  التصنيف
+                </th>
                 <th className="px-4 py-3 text-right font-semibold">الوصف</th>
                 <th className="px-4 py-3 text-right font-semibold">
                   <button
@@ -318,6 +345,9 @@ export function ProductWorkspace({
               {sortedProducts.map((product) => (
                 <tr key={product.id}>
                   <td className="px-4 py-4 font-semibold">{product.name}</td>
+                  <td className="px-4 py-4 text-ink-soft">
+                    {product.category}
+                  </td>
                   <td className="max-w-md px-4 py-4 text-ink-soft">
                     {product.description}
                   </td>
@@ -408,6 +438,7 @@ export function ProductWorkspace({
       {formTarget ? (
         <ProductFormModal
           product={formTarget.mode === "edit" ? formTarget.product : undefined}
+          existingCategories={existingCategories}
           onClose={() => setFormTarget(null)}
           onSaved={() => {
             setFormTarget(null);
